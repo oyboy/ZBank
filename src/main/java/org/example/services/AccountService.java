@@ -1,5 +1,6 @@
 package org.example.services;
 
+import lombok.RequiredArgsConstructor;
 import org.example.models.Account;
 import org.example.models.User;
 import org.example.models.enums.AccountType;
@@ -9,7 +10,7 @@ import org.example.repositories.UserRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
+@RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
