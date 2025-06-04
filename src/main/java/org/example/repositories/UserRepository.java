@@ -2,6 +2,8 @@ package org.example.repositories;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.example.models.User;
 
 import java.io.File;
@@ -9,10 +11,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 public class UserRepository {
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final String USER_PATH = "database/users.json";
+    private final String USER_PATH;
+
+    public UserRepository() {
+        USER_PATH = "database/users.json";
+    }
+
+    public UserRepository(String USER_PATH) {
+        this.USER_PATH = USER_PATH;
+    }
 
     public void save(User user) {
         List<User> users = getAllUsers();
