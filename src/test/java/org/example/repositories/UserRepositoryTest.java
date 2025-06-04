@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@DisplayName("Unit tests for UserRepository")
 public class UserRepositoryTest {
     private final String TEST_USER_PATH = "database/test_users.json";
     private UserRepository userRepository;
