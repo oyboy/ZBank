@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.example.models.enums.TransactionType;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @Builder
 @Getter
+@EqualsAndHashCode
 public class Transaction {
     @Builder.Default
     private final String id = UUID.randomUUID().toString();
