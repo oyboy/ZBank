@@ -8,8 +8,11 @@ import org.junit.jupiter.api.DisplayName;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
-import java.io.File;
+import org.junit.jupiter.api.io.TempDir;
+
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -19,21 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Feature("Transaction data storage and search")
 @DisplayName("Unit tests for TransactionRepository")
 public class TransactionRepositoryTest {
-    private final String TEST_TRANSACTION_PATH = "database/test_transactions.json";
+    @TempDir
+    Path tempDir;
     private TransactionRepository transactionRepository;
 
     @BeforeEach
     public void setUp() throws IOException {
-        transactionRepository = new TransactionRepository(TEST_TRANSACTION_PATH);
-        File file = new File(TEST_TRANSACTION_PATH);
-        boolean created = file.createNewFile();
-        if (created) new ObjectMapper().writeValue(file, new ArrayList<>());
-    }
+        Path testTransactionPath = tempDir.resolve("test_transactions.json");
+        transactionRepository = new TransactionRepository(testTransactionPath.toString());
 
-    @AfterEach
-    public void tearDown() {
-        File file = new File(TEST_TRANSACTION_PATH);
-        if (file.exists()) file.delete();
+        Files.write(testTransactionPath, new ObjectMapper().writeValueAsBytes(new ArrayList<>()));
     }
 
     @Test

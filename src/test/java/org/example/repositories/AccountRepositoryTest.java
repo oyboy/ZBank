@@ -6,8 +6,11 @@ import io.qameta.allure.Feature;
 import org.example.models.Account;
 import org.example.models.enums.AccountType;
 import org.junit.jupiter.api.*;
-import java.io.File;
+import org.junit.jupiter.api.io.TempDir;
+
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,21 +19,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Feature("Account data storage and search")
 @DisplayName("Unit tests for AccountRepository")
 public class AccountRepositoryTest {
-    private final String TEST_ACCOUNT_PATH = "database/test_accounts.json";
+    @TempDir
+    Path tempDir;
     private AccountRepository accountRepository;
 
     @BeforeEach
     public void setUp() throws IOException {
-        accountRepository = new AccountRepository(TEST_ACCOUNT_PATH);
-        File file = new File(TEST_ACCOUNT_PATH);
-        boolean created = file.createNewFile();
-        if (created) new ObjectMapper().writeValue(file, new ArrayList<>());
-    }
+        Path testAccountPath = tempDir.resolve("test_accounts.json");
+        accountRepository = new AccountRepository(testAccountPath.toString());
 
-    @AfterEach
-    public void tearDown() {
-        File file = new File(TEST_ACCOUNT_PATH);
-        if (file.exists()) file.delete();
+        Files.write(testAccountPath, new ObjectMapper().writeValueAsBytes(new ArrayList<>()));
     }
 
     @Test

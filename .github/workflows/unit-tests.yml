@@ -54,14 +54,17 @@ jobs:
           name: unit-tests-results
           path: build/allure-results
 
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
       - name: Generate Allure Report
         run: |
-          mvn allure:report
+          ./gradlew allureReport
           mkdir -p public
-          cp -R target/site/allure-maven-plugin/* public/
+          cp -R build/reports/allure-report/* public/
 
       - name: Check if Allure report is generated
-        run: ls -R target/site/allure-maven-plugin
+        run: ls -R build/reports/allure-report
 
       - name: Check Allure test results
         run: ls -R build/allure-results

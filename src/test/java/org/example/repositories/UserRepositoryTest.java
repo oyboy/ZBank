@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import org.example.models.User;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,20 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Feature("User data storage and search")
 @DisplayName("Unit tests for UserRepository")
 public class UserRepositoryTest {
-    private final String TEST_USER_PATH = "database/test_users.json";
+    @TempDir
+    Path tempDir;
     private UserRepository userRepository;
 
     @BeforeEach
     public void setUp() throws IOException {
-        userRepository = new UserRepository(TEST_USER_PATH);
-        File file = new File(TEST_USER_PATH);
-        boolean created = file.createNewFile();
-        if (created) new ObjectMapper().writeValue(file, new ArrayList<>());
-    }
-    @AfterEach
-    public void tearDown() {
-        File file = new File(TEST_USER_PATH);
-        if (file.exists()) file.delete();
+        Path testUserPath = tempDir.resolve("test_users.json");
+        userRepository = new UserRepository(testUserPath.toString());
+
+        Files.write(testUserPath, new ObjectMapper().writeValueAsBytes(new ArrayList<>()));
     }
 
     @Test
