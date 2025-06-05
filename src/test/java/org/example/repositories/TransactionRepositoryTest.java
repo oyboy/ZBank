@@ -1,5 +1,7 @@
 package org.example.repositories;
 
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.example.models.Transaction;
 import org.example.models.enums.TransactionType;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +15,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Epic("Transactions")
+@Feature("Transaction data storage and search")
 @DisplayName("Unit tests for TransactionRepository")
 public class TransactionRepositoryTest {
     private final String TEST_TRANSACTION_PATH = "database/test_transactions.json";
@@ -33,7 +37,7 @@ public class TransactionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Сохранение и получение транзакции по ID")
+    @DisplayName("Saving and retrieving a transaction by ID")
     public void testSaveAndGetTransactionById() {
         Transaction tx = Transaction.builder()
                 .type(TransactionType.TRANSFER)
@@ -49,9 +53,9 @@ public class TransactionRepositoryTest {
         assertTrue(found.isPresent());
         assertEquals(tx, found.get());
     }
-    
+
     @Test
-    @DisplayName("Сохранение транзакции с некорректными данными вызывает исключение")
+    @DisplayName("Saving a transaction with invalid data throws exception")
     public void testSaveInvalidTransaction_ShouldThrowException() {
         Transaction invalidTx = Transaction.builder()
                 .type(null)
@@ -69,7 +73,7 @@ public class TransactionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Получение всех транзакций по sourceAccountId")
+    @DisplayName("Retrieving all transactions by sourceAccountId")
     public void testGetTransactionsBySourceId() {
         Transaction tx1 = Transaction.builder()
                 .type(TransactionType.TRANSFER)
@@ -104,7 +108,7 @@ public class TransactionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Получение всех транзакций")
+    @DisplayName("Retrieving all transactions")
     public void testGetAllTransactions() {
         Transaction tx1 = Transaction.builder()
                 .type(TransactionType.DEPOSIT)
@@ -130,7 +134,7 @@ public class TransactionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Получение транзакции по несуществующему ID")
+    @DisplayName("Retrieving a transaction by non-existent ID")
     public void testGetTransactionByInvalidId() {
         Optional<Transaction> tx = transactionRepository.getTransactionById("non-existent-id");
         assertTrue(tx.isEmpty());

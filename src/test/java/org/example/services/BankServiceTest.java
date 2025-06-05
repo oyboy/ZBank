@@ -1,5 +1,7 @@
 package org.example.services;
 
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.example.models.Account;
 import org.example.models.Transaction;
 import org.example.models.User;
@@ -17,6 +19,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Epic("Transactions and Accounts")
+@Feature("Transaction creation and search")
 @DisplayName("Unit tests for BankService")
 public class BankServiceTest {
     @Mock
@@ -33,7 +37,7 @@ public class BankServiceTest {
     }
 
     @Test
-    @DisplayName("Депозит должен увеличивать баланс и создавать транзакцию")
+    @DisplayName("Deposit should increase balance and create transaction")
     public void testDeposit_ShouldIncreaseBalanceAndCreateTransaction() throws Exception {
         String accountId = "acc1";
         double initialBalance = 100.0;
@@ -53,7 +57,7 @@ public class BankServiceTest {
     }
 
     @Test
-    @DisplayName("Депозит с несуществующим аккаунтом должен выбрасывать исключение")
+    @DisplayName("Deposit with non-existent account should throw exception")
     public void testDeposit_WithNonExistentAccount_ShouldThrowException() {
         String accountId = "non-existent";
 
@@ -63,7 +67,7 @@ public class BankServiceTest {
     }
 
     @Test
-    @DisplayName("Депозит с отрицательной суммой должен выбрасывать исключение")
+    @DisplayName("Deposit with negative amount should throw exception")
     public void testDeposit_WithNegativeAmount_ShouldThrowException() {
         String accountId = "acc1";
         Account account = new Account(accountId, 100.0, AccountType.DEBIT);
@@ -74,7 +78,7 @@ public class BankServiceTest {
     }
 
     @Test
-    @DisplayName("Снятие средств должно уменьшать баланс и создавать транзакцию")
+    @DisplayName("Withdrawal should decrease balance and create transaction")
     public void testWithdraw_ShouldDecreaseBalanceAndCreateTransaction() throws Exception {
         String accountId = "acc1";
         double initialBalance = 100.0;
@@ -94,7 +98,7 @@ public class BankServiceTest {
     }
 
     @Test
-    @DisplayName("Снятие средств с недостаточным балансом должно выбрасывать исключение")
+    @DisplayName("Withdrawal with insufficient balance should throw exception")
     public void testWithdraw_WithInsufficientBalance_ShouldThrowException() {
         String accountId = "acc1";
         Account account = new Account(accountId, 30.0, AccountType.DEBIT);
@@ -105,7 +109,7 @@ public class BankServiceTest {
     }
 
     @Test
-    @DisplayName("Перевод должен изменять балансы обоих счетов и создавать транзакцию")
+    @DisplayName("Transfer should update both account balances and create transaction")
     public void testTransfer_ShouldUpdateBalancesAndCreateTransaction() throws Exception {
         String fromAccountId = "acc1";
         String toAccountId = "acc2";
@@ -133,7 +137,7 @@ public class BankServiceTest {
     }
 
     @Test
-    @DisplayName("Получение истории транзакций должно возвращать транзакции по всем счетам пользователя")
+    @DisplayName("Getting transaction history should return transactions for all user's accounts")
     public void testGetTransactionHistoryByUser_ShouldReturnAllUserTransactions() {
         String accountId1 = "acc1";
         String accountId2 = "acc2";

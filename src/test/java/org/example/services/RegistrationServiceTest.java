@@ -1,5 +1,7 @@
 package org.example.services;
 
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.example.models.User;
 import org.example.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Epic("User Management")
+@Feature("User registration and authentication")
 @DisplayName("Unit test for registration service")
 public class RegistrationServiceTest {
     @Mock
@@ -27,7 +31,7 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Проверка регистрации пользователя с валидными данными")
+    @DisplayName("User registration with valid data should be successful")
     public void testRegister_WhenProvidedValidData_ShouldSaveUser() {
         String name = "John Doe";
         String email = "johndoe@example.com";
@@ -41,7 +45,7 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Проверка регистрации с несовпадающим паролем")
+    @DisplayName("Registration with mismatched passwords should throw exception")
     public void testRegister_WhenProvidedInvalidData_ShouldThrowException() {
         String name = "John Doe";
         String email = "johndoe@example.com";
@@ -57,7 +61,7 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Попытка зарегистрировать существующего пользователя")
+    @DisplayName("Attempt to register an already existing user should throw exception")
     public void testRegister_WhenUserAlreadyExists_ShouldThrowException() {
         String name = "John Doe";
         String email = "johndoe@example.com";
@@ -73,7 +77,7 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Регистрация с null-полями")
+    @DisplayName("Registration with null fields should throw exception")
     public void testRegister_WhenSomeFieldIsNull_ShouldThrowException() {
         String name = "John Doe";
         String email = null;
@@ -89,7 +93,7 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Регистрация с невалидным email")
+    @DisplayName("Registration with invalid email should throw exception")
     public void testRegister_WhenProvidedInvalidEmail_ShouldThrowException() {
         String name = "John Doe";
         String email = "johndoe@.com";
@@ -105,7 +109,7 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Авторизация с валидными данными")
+    @DisplayName("Login with valid credentials should return user")
     public void testLogin_WhenProvidedValidData_ShouldReturnUser() {
         String email = "johndoe@example.com";
         String password = "password123";
@@ -119,7 +123,7 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Авторизация с невалидным паролем")
+    @DisplayName("Login with invalid password should return empty user")
     public void testLogin_WhenProvidedInvalidPassword_ShouldReturnEmptyUser(){
         String email = "johndoe@example.com";
         String password = "wrongpassword";
@@ -132,7 +136,7 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Авторизация по несуществующему email")
+    @DisplayName("Login with non-existent email should return empty user")
     public void testLogin_WhenProvidedInvalidEmail_ShouldReturnEmptyUser(){
         String email = "nonexistent@example.com";
         String password = "password123";

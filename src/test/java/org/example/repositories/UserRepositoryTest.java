@@ -1,6 +1,8 @@
 package org.example.repositories;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.example.models.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+@Epic("User Management")
+@Feature("User data storage and search")
 @DisplayName("Unit tests for UserRepository")
 public class UserRepositoryTest {
     private final String TEST_USER_PATH = "database/test_users.json";
@@ -33,7 +38,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Сохранение и получение пользователя")
+    @DisplayName("Saving and retrieving a user")
     public void testSaveAndGetUser() {
         User user = new User("John Doe", "john@example.com", "pass123");
         userRepository.save(user);
@@ -48,7 +53,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Обновление существующего пользователя")
+    @DisplayName("Updating an existing user")
     public void testUpdateUser() {
         User user = new User("John Doe", "john@example.com", "pass123");
         userRepository.save(user);
@@ -63,7 +68,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Получение пользователя по сущестующему email")
+    @DisplayName("Retrieving a user by existing email")
     public void testGetUserByEmail() {
         User user = new User("John Doe", "john@example.com", "pass123");
         userRepository.save(user);
@@ -73,7 +78,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Получение пользователя по несуществующему email")
+    @DisplayName("Retrieving a user by non-existent email")
     public void testGetUserByInvalidEmail() {
         Optional<User> user = userRepository.getUserByEmail("nonexistent@example.com");
         assertTrue(user.isEmpty());

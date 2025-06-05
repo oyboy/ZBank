@@ -1,6 +1,8 @@
 package org.example.repositories;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.example.models.Account;
 import org.example.models.enums.AccountType;
 import org.junit.jupiter.api.*;
@@ -10,6 +12,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Epic("Account Management")
+@Feature("Account data storage and search")
 @DisplayName("Unit tests for AccountRepository")
 public class AccountRepositoryTest {
     private final String TEST_ACCOUNT_PATH = "database/test_accounts.json";
@@ -30,7 +34,7 @@ public class AccountRepositoryTest {
     }
 
     @Test
-    @DisplayName("Сохранение и получение аккаунта по ID")
+    @DisplayName("Saving and retrieving account by ID")
     public void testSaveAndGetAccountById() {
         Account account = new Account(AccountType.DEBIT);
         account.setBalance(1000.0);
@@ -45,7 +49,7 @@ public class AccountRepositoryTest {
     }
 
     @Test
-    @DisplayName("Обновление существующего аккаунта")
+    @DisplayName("Updating an existing account")
     public void testUpdateAccount() {
         Account account = new Account(AccountType.DEBIT);
         account.setBalance(1000.0);
@@ -61,14 +65,14 @@ public class AccountRepositoryTest {
     }
 
     @Test
-    @DisplayName("Получение несуществующего аккаунта")
+    @DisplayName("Retrieving a non-existent account")
     public void testGetNonExistentAccount() {
         Optional<Account> result = accountRepository.getAccountById("non-existent-id");
         assertTrue(result.isEmpty());
     }
 
     @Test
-    @DisplayName("Получение всех аккаунтов")
+    @DisplayName("Retrieving all accounts")
     public void testGetAllAccounts() {
         Account a1 = new Account();
         Account a2 = new Account();

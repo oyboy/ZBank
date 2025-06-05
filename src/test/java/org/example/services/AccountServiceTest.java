@@ -1,5 +1,7 @@
 package org.example.services;
 
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.example.models.Account;
 import org.example.models.User;
 import org.example.models.enums.AccountType;
@@ -13,6 +15,8 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Epic("Account Management")
+@Feature("Account creation and search")
 @DisplayName("Unit tests for AccountService")
 public class AccountServiceTest {
     @Mock
@@ -29,7 +33,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    @DisplayName("Создание нового счёта должно сохранять его и обновлять пользователя")
+    @DisplayName("Creating a new account should save it and update the user")
     public void testCreateAccount_ShouldSaveAccountAndUpdateUser() {
         User user = new User("John Doe", "johndoe@example.com", "pass");
         Account account = new Account(AccountType.DEBIT);
@@ -43,7 +47,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    @DisplayName("Получение списка счетов пользователя")
+    @DisplayName("Getting user's list of accounts")
     public void testGetUserAccounts_ShouldReturnListOfAccounts() {
         Account account1 = new Account(AccountType.DEBIT);
         Account account2 = new Account(AccountType.DEBIT);
@@ -60,7 +64,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    @DisplayName("Если один из счетов не найден — он не должен попадать в результат")
+    @DisplayName("If one of the accounts is not found — it should not be included in the result")
     public void testGetUserAccounts_WithMissingAccount_ShouldFilterNull() {
         Account account1 = new Account(AccountType.DEBIT);
         String missingAccountId = UUID.randomUUID().toString();
