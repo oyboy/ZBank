@@ -6,6 +6,7 @@ build/
 database
 allure-report
 allure-results
+ui-tests/src/test/resources/conf.properties
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
