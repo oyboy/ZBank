@@ -14,4 +14,8 @@ public class SportsBookSteps {
         String actual = sportsBookPage.getLiveNowTitle();
         return expectedText.equalsIgnoreCase(actual);
     }
+
+    public boolean allEventsButtonIsDisplayed() {
+        return sportsBookPage.viewAllEventsButtonIsDisplayed();
+    }
 }

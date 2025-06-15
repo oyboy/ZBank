@@ -26,7 +26,10 @@ public abstract class BaseE2ETest {
                 ConfProperties.getProperty("login"),
                 ConfProperties.getProperty("password")
         );
+    }
 
+    protected static void navigateToConfig(){
+        driver.get(ConfProperties.getProperty("config_page"));
         AdminPanelNavigationPage navigation = new AdminPanelNavigationPage(driver);
         navigation.navigateToConfig();
     }

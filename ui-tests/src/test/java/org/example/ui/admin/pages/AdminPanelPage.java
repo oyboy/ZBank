@@ -16,6 +16,8 @@ import java.util.NoSuchElementException;
 public class AdminPanelPage {
     private final WebDriver driver;
 
+    /*Language customization*/
+
     @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[1]/div/div[1]/div[2]/h6/span[1]")
     private WebElement title;
 
@@ -39,6 +41,17 @@ public class AdminPanelPage {
 
     @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[1]/button")
     private WebElement saveConfigurationButton;
+
+    /* Highlights */
+
+    @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[4]/div/div[1]/div[2]/div[3]/div/div/div/div/button")
+    private WebElement calendarButton;
+
+    @FindBy(xpath = "/html/body/div[3]/div[2]/div/div[2]/div[1]/div[2]/div/div/div[2]/div/div[3]/button[7]")
+    private WebElement lastDayOfWeekCalendarButton;
+
+    @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[1]/div[2]/div[1]/div[1]/div[1]")
+    private WebElement sportsScrollableList;
 
     public AdminPanelPage(WebDriver driver) {
         this.driver = driver;
@@ -76,7 +89,7 @@ public class AdminPanelPage {
     }
 
     public void clickSaveConfigurationButton() {
-        waitForVisibility(saveConfigurationButton, 2);
+        waitForClickable(saveConfigurationButton, 2);
         saveConfigurationButton.click();
     }
 
@@ -107,5 +120,52 @@ public class AdminPanelPage {
     private void waitForVisibility(WebElement element, int seconds) {
         new WebDriverWait(driver, Duration.ofSeconds(seconds))
                 .until(ExpectedConditions.visibilityOf(element));
+    }
+    private void waitForClickable(WebElement element, int seconds) {
+        new WebDriverWait(driver, Duration.ofSeconds(seconds))
+                .until(ExpectedConditions.elementToBeClickable(element));
+    }
+
+    public void selectLanguage(String language) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+        wait.until(driver -> languageButtonsBlock.findElements(By.tagName("button")).size() > 1);
+
+        languageButtonsBlock.findElements(By.tagName("button")).stream()
+                .filter(btn -> btn.getText().equalsIgnoreCase(language))
+                .findFirst().ifPresent(WebElement::click);
+    }
+
+    public void selectDate() {
+        calendarButton.click();
+        waitForClickable(lastDayOfWeekCalendarButton, 2);
+        lastDayOfWeekCalendarButton.click();
+        try{
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.err.println("Can't select date: " + e.getMessage());
+        }
+    }
+
+    public void selectFirstHighlightsInSportsScrollList() {
+        sportsScrollableList.click();
+
+        WebElement firstNestedList = sportsScrollableList.findElement(By.xpath("../div[2]/div/div/div[1]"));
+        firstNestedList.click();
+
+        WebElement firstListItem = firstNestedList.findElement(By.xpath("./div[2]/div/div/div"));
+        firstListItem.click();
+    }
+
+    public int getCountOfAddedHighlights() {
+        List<WebElement> addedHighlights = driver.findElements(By.xpath("//*[@id=\"root\"]/div[1]/div/div[2]/div[5]/div/div[1]/div"));
+        return addedHighlights.size();
+    }
+
+    public void selectEvents(int count) {
+        for (int i = 1; i <= count; i++) {
+            By buttonLocator = By.xpath("(//*[@id='root']/div[1]/div/div[2]/div[4]/div/div[2]//div)[1]//button");
+            WebElement button = driver.findElement(buttonLocator);
+            button.click();
+        }
     }
 }

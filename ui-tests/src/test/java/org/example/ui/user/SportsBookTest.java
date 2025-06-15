@@ -24,4 +24,10 @@ public class SportsBookTest extends BaseSportsBookTest {
                 "Текст отображается на неверном языке"
         );
     }
+
+    @Test
+    public void allEventsButtonIsDisplayed(){
+        assertTrue(sportsBookSteps.allEventsButtonIsDisplayed(),
+                "Кнопка view all events должна отображаться, если событий >= 10");
+    }
 }
