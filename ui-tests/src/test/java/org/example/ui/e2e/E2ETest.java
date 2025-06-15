@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LanguageSyncE2ETest extends BaseE2ETest {
+public class E2ETest extends BaseE2ETest {
     private AdminLanguageSteps adminSteps;
     private SportsBookSteps userSteps;
     private HighlightsSteps highlightsSteps;

@@ -135,6 +135,10 @@ public class AdminPanelPage {
                 .findFirst().ifPresent(WebElement::click);
     }
 
+    public int getCountOfAddedLanguages(){
+        return languageButtonsBlock.findElements(By.tagName("button")).size();
+    }
+
     public void selectDate() {
         calendarButton.click();
         waitForClickable(lastDayOfWeekCalendarButton, 2);

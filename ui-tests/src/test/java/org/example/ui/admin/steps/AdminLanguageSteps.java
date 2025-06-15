@@ -11,6 +11,8 @@ public class AdminLanguageSteps {
     }
 
     public void addLanguageIfNotExist(String language) {
+        if (adminPage.getCountOfAddedLanguages() > 9) throw new RuntimeException("Достигнут лимит добавления языков");
+
         boolean exists = adminPage.isLanguagePresent(language);
         if (!exists){
             adminPage.clickEditLanguageCustomizationButton();
