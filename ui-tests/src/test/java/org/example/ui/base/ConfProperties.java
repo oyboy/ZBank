@@ -1,4 +1,4 @@
-package org.example.ui.util;
+package org.example.ui.base;
 
 import java.io.FileInputStream;
 import java.io.IOException;
