@@ -30,6 +30,12 @@ public class AdminPanelPage {
     @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[3]/div/div/div/div[2]/div/button[2]")
     private WebElement createLanguageButton;
 
+    @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[3]/div/div/div/div[2]/div/button[1]")
+    private WebElement deleteLanguageButton;
+
+    @FindBy(xpath = "/html/body/div[3]/div[3]/div/div[3]/button[2]")
+    private WebElement deleteLanguageInScrollListButton;
+
     @FindBy(xpath = "/html/body/div[3]/div[3]/div/div[2]/div[3]")
     private WebElement scrollableLanguagesBlock;
 
@@ -115,6 +121,14 @@ public class AdminPanelPage {
             previousItemCount = currentItemCount;
         }
         throw new NoSuchElementException("Язык \"" + language + "\" не найден в списке после прокрутки.");
+    }
+
+    public void clickDeleteLanguageButton() {
+        waitForClickable(deleteLanguageButton, 2);
+        deleteLanguageButton.click();
+    }
+    public void removeLanguageFromList() {
+        deleteLanguageInScrollListButton.click();
     }
 
     private void waitForVisibility(WebElement element, int seconds) {

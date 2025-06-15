@@ -27,4 +27,15 @@ public class AdminLanguageSteps {
     public boolean isLanguageVisible(String language) {
         return adminPage.isLanguagePresent(language);
     }
+
+    public void removeLanguageIfExists(String language) {
+        if (adminPage.isLanguagePresent(language)) {
+            adminPage.selectLanguage(language);
+            adminPage.clickEditLanguageCustomizationButton();
+            adminPage.clickDeleteLanguageButton();
+            adminPage.selectLanguageInList(language);
+            adminPage.removeLanguageFromList();
+            adminPage.clickSaveConfigurationButton();
+        }
+    }
 }

@@ -6,6 +6,7 @@ import org.example.ui.base.BaseAdminPanelTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AdminPanelTest extends BaseAdminPanelTest {
@@ -32,5 +33,12 @@ public class AdminPanelTest extends BaseAdminPanelTest {
         int count = 11;
         highlightsSteps.addHighlights(language, count);
         assertTrue(highlightsSteps.getCountOfAddedHighlights() > count, "Добавлено неверное количество событий");
+    }
+
+    @Test
+    public void shouldRemoveLanguageIfExist(){
+        String language = "french";
+        languageSteps.removeLanguageIfExists(language);
+        assertFalse(languageSteps.isLanguageVisible(language), "Язык не был удалён");
     }
 }
