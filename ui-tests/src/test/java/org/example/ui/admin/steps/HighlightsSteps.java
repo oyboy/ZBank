@@ -3,6 +3,8 @@ package org.example.ui.admin.steps;
 import org.example.ui.admin.pages.AdminPanelPage;
 import org.openqa.selenium.WebDriver;
 
+import java.util.List;
+
 public class HighlightsSteps {
     private final AdminPanelPage adminPanelPage;
 
@@ -23,6 +25,10 @@ public class HighlightsSteps {
     public int getCountOfAddedHighlights(){
         return adminPanelPage.getCountOfAddedHighlights();
     }
+    public List<String> getAddedHighlights(String language){
+        adminPanelPage.selectLanguage(language);
+        return adminPanelPage.getAddedHighlights();
+    }
 
     public String deleteFirstSport(){
         if (adminPanelPage.getCountOfAddedSports() == 0)
@@ -39,5 +45,12 @@ public class HighlightsSteps {
     public String setIncorrectDate(){
         adminPanelPage.selectIncorrectDate();
         return adminPanelPage.getInvalidFormatMessage();
+    }
+
+    public void copyEvents(String toLanguage){
+        addHighlights("Default", 2);
+        adminPanelPage.selectLanguage(toLanguage);
+        adminPanelPage.clickCopyEventsButton();
+        adminPanelPage.clickSaveConfigurationButton();
     }
 }

@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class AdminPanelPage {
     private final WebDriver driver;
@@ -70,6 +71,9 @@ public class AdminPanelPage {
 
     @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[1]/div[2]/div[1]/div[4]/span/button")
     private WebElement deleteSportButton;
+
+    @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[4]/div/div[2]/div[2]/button")
+    private WebElement copyEventsButton;
 
     public AdminPanelPage(WebDriver driver) {
         this.driver = driver;
@@ -194,6 +198,12 @@ public class AdminPanelPage {
         List<WebElement> addedHighlights = driver.findElements(By.xpath("//*[@id=\"root\"]/div[1]/div/div[2]/div[5]/div/div[1]/div"));
         return addedHighlights.size();
     }
+    public List<String> getAddedHighlights() {
+        return driver.findElements(By.xpath("//*[@id=\"root\"]/div[1]/div/div[2]/div[5]/div/div[1]/div"))
+                .stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
+    }
 
     public void selectEvents(int count) {
         for (int i = 1; i <= count; i++) {
@@ -232,5 +242,13 @@ public class AdminPanelPage {
        WebElement element = driver.findElement(By.xpath("//*[@id=\":ro:\"]"));
        waitForVisibility(element, 2);
        return element.getText();
+    }
+
+    public void clickCopyEventsButton(){
+        waitForClickable(copyEventsButton, 2);
+        copyEventsButton.click();
+    }
+    public void refreshPage(){
+        driver.navigate().refresh();
     }
 }

@@ -6,6 +6,8 @@ import org.example.ui.base.BaseAdminPanelTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminPanelTest extends BaseAdminPanelTest {
@@ -49,8 +51,21 @@ public class AdminPanelTest extends BaseAdminPanelTest {
     }
 
     @Test
-    public void shouldDisplayErrorWithIncorreDate(){
+    public void shouldDisplayErrorWithIncorrectDate(){
         String message = highlightsSteps.setIncorrectDate();
         assertEquals("Invalid Date Format", message, "Должно отображаться корректное сообщение");
+    }
+
+    @Test
+    public void shouldCopyEventsFromDefaultLanguageToAnother(){
+        String language = "french";
+        languageSteps.addLanguageIfNotExist(language);
+        List<String> eventsBefore = highlightsSteps.getAddedHighlights(language);
+
+        highlightsSteps.copyEvents(language);
+        List<String> eventsAfter = highlightsSteps.getAddedHighlights(language);
+
+        assertTrue(eventsAfter.containsAll(eventsBefore), "Не все старые события были скопированы");
+        assertTrue(eventsAfter.size() >= eventsBefore.size(), "Количество событий не увеличилось");
     }
 }
