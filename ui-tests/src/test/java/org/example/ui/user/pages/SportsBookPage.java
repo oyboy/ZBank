@@ -28,6 +28,9 @@ public class SportsBookPage {
     @FindBy(xpath = "//*[@id=\"sb\"]/div[2]/div[1]/div[2]/div[10]/div[1]/div[2]/div/div/div[2]/div//div")
     private List<WebElement> topSports;
 
+    @FindBy(xpath = "//*[@id=\"sb\"]/div[2]/div[1]/div/div/div[5]/div[2]/div")
+    private WebElement coefficientFormatMenu;
+
     public String getLiveNowTitle() {
         waitForVisibility(liveNowTitle, 3);
         return liveNowTitle.getText();
@@ -52,5 +55,34 @@ public class SportsBookPage {
 
     public List<String> getTopSportsTitles() {
         return topSports.stream().map(WebElement::getText).collect(Collectors.toList());
+    }
+
+    public void switchCoefficientAndCheckDisplaying() {
+        coefficientFormatMenu.click();
+        List<WebElement> elements = coefficientFormatMenu.findElements(By.xpath("./div[2]/div"));
+        System.out.println("size: " + elements.size());
+        for (WebElement element : elements) {
+            String elementText = element.getText();
+            System.out.println("text: " + elementText);
+            waitForClickable(element, 2);
+            element.click();
+
+            String coefficientText = driver.
+                    findElement(By.xpath("//*[@id=\"sb\"]/div[2]/div[2]/div[2]/div[7]/div[2]/div/div/div[2]/div[5]/div/div[2]/div[2]/div[2]/div/div[2]/div"))
+                    .getText();
+            switch (elementText) {
+                case "Décimal (2.00)":
+                    if (!coefficientText.matches("^[0-9]+\\.[0-9]{1,2}$")) {
+                        throw new AssertionError("Неверный формат десятичного коэффициента: " + coefficientText);
+                    }
+                    break;
+                case "Américain (+100)":
+                    if (!coefficientText.matches("^[+-][0-9]+$")) {
+                        throw new AssertionError("Неверный формат американского коэффициента: " + coefficientText);
+                    }
+                    break;
+            }
+            coefficientFormatMenu.click();
+        }
     }
 }

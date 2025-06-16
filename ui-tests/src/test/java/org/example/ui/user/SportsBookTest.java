@@ -30,4 +30,9 @@ public class SportsBookTest extends BaseSportsBookTest {
         assertTrue(sportsBookSteps.allEventsButtonIsDisplayed(),
                 "Кнопка view all events должна отображаться, если событий >= 10");
     }
+
+    @Test
+    public void checkCoefficients(){
+        sportsBookSteps.checkCoefficientInSportsList();
+    }
 }

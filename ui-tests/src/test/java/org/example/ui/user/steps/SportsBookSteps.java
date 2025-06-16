@@ -22,4 +22,8 @@ public class SportsBookSteps {
     public boolean checkTitleInSportsList(String expectedTitle) {
         return sportsBookPage.getTopSportsTitles().contains(expectedTitle);
     }
+
+    public void checkCoefficientInSportsList() {
+        sportsBookPage.switchCoefficientAndCheckDisplaying();
+    }
 }
