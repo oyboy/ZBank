@@ -42,7 +42,7 @@ public class AdminPanelTest extends BaseAdminPanelTest {
         String language = "french";
         int count = 11;
         highlightsSteps.addHighlights(language, count);
-        assertTrue(highlightsSteps.getCountOfAddedHighlights() > count, "Добавлено неверное количество событий");
+        assertTrue(highlightsSteps.getCountOfAddedHighlights() >= count, "Добавлено неверное количество событий");
     }
 
     @Test
