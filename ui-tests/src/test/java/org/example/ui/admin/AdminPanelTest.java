@@ -47,4 +47,10 @@ public class AdminPanelTest extends BaseAdminPanelTest {
         highlightsSteps.deleteFirstSport();
         assertEquals(highlightsSteps.getCountOfAddedSports(), countOfSports - 1);
     }
+
+    @Test
+    public void shouldDisplayErrorWithIncorreDate(){
+        String message = highlightsSteps.setIncorrectDate();
+        assertEquals("Invalid Date Format", message, "Должно отображаться корректное сообщение");
+    }
 }

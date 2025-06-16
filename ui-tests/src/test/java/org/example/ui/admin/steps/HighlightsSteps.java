@@ -35,4 +35,9 @@ public class HighlightsSteps {
     public int getCountOfAddedSports(){
         return adminPanelPage.getCountOfAddedSports();
     }
+
+    public String setIncorrectDate(){
+        adminPanelPage.selectIncorrectDate();
+        return adminPanelPage.getInvalidFormatMessage();
+    }
 }

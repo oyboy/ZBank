@@ -53,11 +53,17 @@ public class AdminPanelPage {
 
     /* Highlights */
 
+    @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[4]/div/div[1]/div[2]/div[1]/div/div/div/div/button")
+    private WebElement calendarFromButton;
+
     @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[4]/div/div[1]/div[2]/div[3]/div/div/div/div/button")
-    private WebElement calendarButton;
+    private WebElement calendarToButton;
 
     @FindBy(xpath = "/html/body/div[3]/div[2]/div/div[2]/div[1]/div[2]/div/div/div[2]/div/div[3]/button[7]")
     private WebElement lastDayOfWeekCalendarButton;
+
+    @FindBy(xpath = "/html/body/div[3]/div[2]/div/div[2]/div[1]/div[2]/div/div/div[2]/div/div[5]/button[1]")
+    private WebElement lastDayOfMonthCalendarButton;
 
     @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[1]/div[2]/div[1]/div[1]/div[1]")
     private WebElement sportsScrollableList;
@@ -164,7 +170,7 @@ public class AdminPanelPage {
     }
 
     public void selectDate() {
-        calendarButton.click();
+        calendarToButton.click();
         waitForClickable(lastDayOfWeekCalendarButton, 2);
         lastDayOfWeekCalendarButton.click();
         try{
@@ -214,5 +220,17 @@ public class AdminPanelPage {
         deleteSportButton.click();
 
         return title;
+    }
+
+    public void selectIncorrectDate(){
+        calendarFromButton.click();
+        waitForClickable(lastDayOfMonthCalendarButton, 2);
+        lastDayOfMonthCalendarButton.click();
+    }
+
+    public String getInvalidFormatMessage(){
+       WebElement element = driver.findElement(By.xpath("//*[@id=\":ro:\"]"));
+       waitForVisibility(element, 2);
+       return element.getText();
     }
 }
