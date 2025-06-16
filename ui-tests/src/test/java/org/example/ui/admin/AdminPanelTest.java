@@ -1,5 +1,8 @@
 package org.example.ui.admin;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Story;
+import io.qameta.allure.TmsLink;
 import org.example.ui.admin.steps.AdminLanguageSteps;
 import org.example.ui.admin.steps.HighlightsSteps;
 import org.example.ui.base.BaseAdminPanelTest;
@@ -22,6 +25,9 @@ public class AdminPanelTest extends BaseAdminPanelTest {
     }
 
     @Test
+    @Description("Проверка добавления языка в список 'Language customization'")
+    @Story("Admin_Языковая настройка_Добавление языка")
+    @TmsLink("TC_03_1")
     public void shouldAddNewLanguageIfNotPresent() {
         String language = "french";
         languageSteps.addLanguageIfNotExist(language);
@@ -29,6 +35,9 @@ public class AdminPanelTest extends BaseAdminPanelTest {
     }
 
     @Test
+    @Description("Проверка добавления новых событий, если их недостаточно")
+    @Story("Highlights_Добавление событий")
+    @TmsLink("TC_04_1")
     public void shouldAddNewHighlightsIfNotSufficient() {
         String language = "french";
         int count = 11;
@@ -37,6 +46,9 @@ public class AdminPanelTest extends BaseAdminPanelTest {
     }
 
     @Test
+    @Description("Проверка удаления языка из списка 'Language customization'")
+    @Story("Admin_Языковая настройка_Удаление языка")
+    @TmsLink("TC_03_2")
     public void shouldRemoveLanguageIfPresent() {
         String language = "french";
         languageSteps.removeLanguageIfExists(language);
@@ -44,6 +56,9 @@ public class AdminPanelTest extends BaseAdminPanelTest {
     }
 
     @Test
+    @Description("Проверка удаления спорта из списка")
+    @Story("Highlights_Удаление спорта")
+    @TmsLink("TC_04_2")
     public void shouldRemoveFirstSportIfPresent() {
         int countOfSports = highlightsSteps.getCountOfAddedSports();
         highlightsSteps.deleteFirstSport();
@@ -51,12 +66,18 @@ public class AdminPanelTest extends BaseAdminPanelTest {
     }
 
     @Test
+    @Description("Проверка отображения сообщения об ошибке для неверного формата даты")
+    @Story("Highlights_Неверный формат даты")
+    @TmsLink("TC_06")
     public void shouldDisplayErrorMessageForInvalidDateFormat() {
         String message = highlightsSteps.setIncorrectDate();
         assertEquals("Invalid Date Format", message, "Должно отображаться корректное сообщение");
     }
 
     @Test
+    @Description("Проверка копирования событий с одного языка на другой")
+    @Story("Admin_Копирование событий")
+    @TmsLink("TC_07")
     public void shouldCopyEventsFromDefaultLanguageToAnotherLanguage() {
         String language = "french";
         languageSteps.addLanguageIfNotExist(language);

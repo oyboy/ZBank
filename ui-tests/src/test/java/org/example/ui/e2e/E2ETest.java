@@ -1,5 +1,8 @@
 package org.example.ui.e2e;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Story;
+import io.qameta.allure.TmsLink;
 import org.example.ui.admin.steps.AdminLanguageSteps;
 import org.example.ui.admin.steps.HighlightsSteps;
 import org.example.ui.base.BaseE2ETest;
@@ -31,6 +34,9 @@ public class E2ETest extends BaseE2ETest {
     }
 
     @Test
+    @Description("Проверка, что на сайте отображается французский язык")
+    @Story("UI_Языковая версия сайта")
+    @TmsLink("TC_01")
     public void addLanguage_shouldBeVisibleInUserInterface() {
         String language = "french";
         adminSteps.addLanguageIfNotExist(language);
@@ -41,6 +47,9 @@ public class E2ETest extends BaseE2ETest {
     }
 
     @Test
+    @Description("Проверка корректности отображения кнопки 'View all events'")
+    @Story("UI_Кнопка 'View all events'")
+    @TmsLink("TC_02")
     public void allEventsButton_shouldBeDisplayed_whenEventCountIsGreaterThanOrEqualToTen() {
         int count = 11;
         highlightsSteps.addHighlights("french", count);
@@ -54,6 +63,8 @@ public class E2ETest extends BaseE2ETest {
     }
 
     @Test
+    @Description("Проверка удаления спорта из списка")
+    @TmsLink("TC_04_2")
     public void deletingSport_shouldRemoveItFromUserSite() {
         String removed = highlightsSteps.deleteFirstSport();
         goToUserSite();
