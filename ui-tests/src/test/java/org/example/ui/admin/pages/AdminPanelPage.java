@@ -70,7 +70,7 @@ public class AdminPanelPage {
     @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[1]/div[2]/div[1]/div[1]/div[1]")
     private WebElement sportsScrollableList;
 
-    @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[1]/div[2]/div[1]/div[4]/span/button")
+    @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[1]/div[2]/div[1]/div[5]/span/button")
     private WebElement deleteSportButton;
 
     @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[4]/div/div[2]/div[2]/button")
