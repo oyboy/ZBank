@@ -18,4 +18,8 @@ public class SportsBookSteps {
     public boolean allEventsButtonIsDisplayed() {
         return sportsBookPage.viewAllEventsButtonIsDisplayed();
     }
+
+    public boolean checkTitleInSportsList(String expectedTitle) {
+        return sportsBookPage.getTopSportsTitles().contains(expectedTitle);
+    }
 }

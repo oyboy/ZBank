@@ -23,4 +23,16 @@ public class HighlightsSteps {
     public int getCountOfAddedHighlights(){
         return adminPanelPage.getCountOfAddedHighlights();
     }
+
+    public String deleteFirstSport(){
+        if (adminPanelPage.getCountOfAddedSports() == 0)
+            throw new RuntimeException("Нужно добавить хотя бы один вид спорта для удаления");
+        String sportForRemoving = adminPanelPage.selectCheckBoxOfFirstSportAndDelete();
+        adminPanelPage.clickSaveConfigurationButton();
+        return sportForRemoving;
+    }
+
+    public int getCountOfAddedSports(){
+        return adminPanelPage.getCountOfAddedSports();
+    }
 }

@@ -48,6 +48,9 @@ public class AdminPanelPage {
     @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[1]/button")
     private WebElement saveConfigurationButton;
 
+    @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[3]/div/div/div/div[2]/div/span/button")
+    private WebElement applyButton;
+
     /* Highlights */
 
     @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[2]/div[4]/div/div[1]/div[2]/div[3]/div/div/div/div/button")
@@ -58,6 +61,9 @@ public class AdminPanelPage {
 
     @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[1]/div[2]/div[1]/div[1]/div[1]")
     private WebElement sportsScrollableList;
+
+    @FindBy(xpath = "//*[@id=\"root\"]/div[1]/div/div[1]/div[2]/div[1]/div[4]/span/button")
+    private WebElement deleteSportButton;
 
     public AdminPanelPage(WebDriver driver) {
         this.driver = driver;
@@ -130,6 +136,10 @@ public class AdminPanelPage {
     public void removeLanguageFromList() {
         deleteLanguageInScrollListButton.click();
     }
+    public void clickApplyButton(){
+        waitForClickable(applyButton, 2);
+        applyButton.click();
+    }
 
     private void waitForVisibility(WebElement element, int seconds) {
         new WebDriverWait(driver, Duration.ofSeconds(seconds))
@@ -185,5 +195,24 @@ public class AdminPanelPage {
             WebElement button = driver.findElement(buttonLocator);
             button.click();
         }
+    }
+
+    public int getCountOfAddedSports(){
+        By sportsLocator = By.xpath("//*[@id=\"root\"]/div[1]/div/div[1]/div[2]/div[1]/div");
+        List<WebElement> sports = driver.findElements(sportsLocator);
+        return sports.size();
+    }
+
+    public String selectCheckBoxOfFirstSportAndDelete(){
+        sportsScrollableList.click();
+        String title = sportsScrollableList.findElement(By.xpath("./div[1]")).getText();
+
+        WebElement checkbox = sportsScrollableList.findElement(By.tagName("span"));
+        checkbox.click();
+
+        waitForClickable(deleteSportButton, 2);
+        deleteSportButton.click();
+
+        return title;
     }
 }

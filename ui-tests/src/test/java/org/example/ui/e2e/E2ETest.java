@@ -51,4 +51,11 @@ public class E2ETest extends BaseE2ETest {
             assertFalse(userSteps.allEventsButtonIsDisplayed(), "Кнопка не должна отображаться, если событий < 10");
         }
     }
+
+    @Test
+    public void deletingSportShouldDeleteItOnSite(){
+        String removed = highlightsSteps.deleteFirstSport();
+        goToUserSite();
+        assertFalse(userSteps.checkTitleInSportsList(removed), "Спорт не был удалён и по-прежнему отображается на главной");
+    }
 }

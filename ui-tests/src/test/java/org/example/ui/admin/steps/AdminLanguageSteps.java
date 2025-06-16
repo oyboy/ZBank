@@ -35,6 +35,7 @@ public class AdminLanguageSteps {
             adminPage.clickDeleteLanguageButton();
             adminPage.selectLanguageInList(language);
             adminPage.removeLanguageFromList();
+            adminPage.clickApplyButton();
             adminPage.clickSaveConfigurationButton();
         }
     }

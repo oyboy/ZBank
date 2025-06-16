@@ -6,8 +6,7 @@ import org.example.ui.base.BaseAdminPanelTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminPanelTest extends BaseAdminPanelTest {
     private static AdminLanguageSteps languageSteps;
@@ -40,5 +39,12 @@ public class AdminPanelTest extends BaseAdminPanelTest {
         String language = "french";
         languageSteps.removeLanguageIfExists(language);
         assertFalse(languageSteps.isLanguageVisible(language), "Язык не был удалён");
+    }
+
+    @Test
+    public void shouldRemoveSportsIfExist(){
+        int countOfSports = highlightsSteps.getCountOfAddedSports();
+        highlightsSteps.deleteFirstSport();
+        assertEquals(highlightsSteps.getCountOfAddedSports(), countOfSports - 1);
     }
 }
