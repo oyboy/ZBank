@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SportsBookTest extends BaseSportsBookTest {
     private static SportsBookSteps sportsBookSteps;
@@ -44,6 +45,10 @@ public class SportsBookTest extends BaseSportsBookTest {
     @Story("SportsBook_Отображение коэффициентов")
     @TmsLink("TC_05")
     public void shouldCheckCoefficientsInSportsList() {
-        sportsBookSteps.checkCoefficientInSportsList();
+        try {
+            sportsBookSteps.checkCoefficientInSportsList();
+        } catch (AssertionError e) {
+            fail("Исключение было выброшено при проверке коэффициентов: " + e.getMessage());
+        }
     }
 }
