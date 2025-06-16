@@ -1,12 +1,12 @@
 package org.example.ui.admin.pages;
 
+import org.example.ui.base.Waiter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 public class AdminPanelPage {
     private final WebDriver driver;
+    private final Waiter waiter;
 
     /*Language customization*/
 
@@ -77,15 +78,16 @@ public class AdminPanelPage {
 
     public AdminPanelPage(WebDriver driver) {
         this.driver = driver;
+        waiter = new Waiter(driver);
         PageFactory.initElements(driver, this);
     }
 
     public void clickCreateLanguageButton() {
-        waitForVisibility(createLanguageButton, 2);
+        waiter.waitForVisibility(createLanguageButton, 2);
         createLanguageButton.click();
     }
     public void selectLanguageInList(String language) {
-        waitForVisibility(scrollableLanguagesBlock, 2);
+        waiter.waitForVisibility(scrollableLanguagesBlock, 2);
         WebElement element = findLanguageInScrollList(language);
         element.click();
     }
@@ -102,7 +104,7 @@ public class AdminPanelPage {
     }
 
     public void clickAddLanguageButton() {
-        waitForVisibility(addLanguageButton, 2);
+        waiter.waitForVisibility(addLanguageButton, 2);
         addLanguageButton.click();
     }
 
@@ -111,7 +113,7 @@ public class AdminPanelPage {
     }
 
     public void clickSaveConfigurationButton() {
-        waitForClickable(saveConfigurationButton, 2);
+        waiter.waitForClickable(saveConfigurationButton, 2);
         saveConfigurationButton.click();
     }
 
@@ -140,24 +142,15 @@ public class AdminPanelPage {
     }
 
     public void clickDeleteLanguageButton() {
-        waitForClickable(deleteLanguageButton, 2);
+        waiter.waitForClickable(deleteLanguageButton, 2);
         deleteLanguageButton.click();
     }
     public void removeLanguageFromList() {
         deleteLanguageInScrollListButton.click();
     }
     public void clickApplyButton(){
-        waitForClickable(applyButton, 2);
+        waiter.waitForClickable(applyButton, 2);
         applyButton.click();
-    }
-
-    private void waitForVisibility(WebElement element, int seconds) {
-        new WebDriverWait(driver, Duration.ofSeconds(seconds))
-                .until(ExpectedConditions.visibilityOf(element));
-    }
-    private void waitForClickable(WebElement element, int seconds) {
-        new WebDriverWait(driver, Duration.ofSeconds(seconds))
-                .until(ExpectedConditions.elementToBeClickable(element));
     }
 
     public void selectLanguage(String language) {
@@ -175,7 +168,7 @@ public class AdminPanelPage {
 
     public void selectDate() {
         calendarToButton.click();
-        waitForClickable(lastDayOfWeekCalendarButton, 2);
+        waiter.waitForClickable(lastDayOfWeekCalendarButton, 2);
         lastDayOfWeekCalendarButton.click();
         try{
             Thread.sleep(1000);
@@ -226,7 +219,7 @@ public class AdminPanelPage {
         WebElement checkbox = sportsScrollableList.findElement(By.tagName("span"));
         checkbox.click();
 
-        waitForClickable(deleteSportButton, 2);
+        waiter.waitForClickable(deleteSportButton, 2);
         deleteSportButton.click();
 
         return title;
@@ -234,21 +227,18 @@ public class AdminPanelPage {
 
     public void selectIncorrectDate(){
         calendarFromButton.click();
-        waitForClickable(lastDayOfMonthCalendarButton, 2);
+        waiter.waitForClickable(lastDayOfMonthCalendarButton, 2);
         lastDayOfMonthCalendarButton.click();
     }
 
     public String getInvalidFormatMessage(){
        WebElement element = driver.findElement(By.xpath("//*[@id=\":ro:\"]"));
-       waitForVisibility(element, 2);
+        waiter.waitForVisibility(element, 2);
        return element.getText();
     }
 
     public void clickCopyEventsButton(){
-        waitForClickable(copyEventsButton, 2);
+        waiter.waitForClickable(copyEventsButton, 2);
         copyEventsButton.click();
-    }
-    public void refreshPage(){
-        driver.navigate().refresh();
     }
 }

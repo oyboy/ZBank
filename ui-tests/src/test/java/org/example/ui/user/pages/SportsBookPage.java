@@ -1,5 +1,6 @@
 package org.example.ui.user.pages;
 
+import org.example.ui.base.Waiter;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -32,7 +33,7 @@ public class SportsBookPage {
     private WebElement coefficientFormatMenu;
 
     public String getLiveNowTitle() {
-        waitForVisibility(liveNowTitle, 3);
+        new Waiter(driver).waitForVisibility(liveNowTitle, 3);
         return liveNowTitle.getText();
     }
 
@@ -42,15 +43,6 @@ public class SportsBookPage {
         } catch (NoSuchElementException e) {
             return false;
         }
-    }
-
-    private void waitForVisibility(WebElement element, int seconds) {
-        new WebDriverWait(driver, Duration.ofSeconds(seconds))
-                .until(ExpectedConditions.visibilityOf(element));
-    }
-    private void waitForClickable(WebElement element, int seconds) {
-        new WebDriverWait(driver, Duration.ofSeconds(seconds))
-                .until(ExpectedConditions.elementToBeClickable(element));
     }
 
     public List<String> getTopSportsTitles() {
@@ -64,7 +56,7 @@ public class SportsBookPage {
         for (WebElement element : elements) {
             String elementText = element.getText();
             System.out.println("text: " + elementText);
-            waitForClickable(element, 2);
+            new Waiter(driver).waitForClickable(element, 2);
             element.click();
 
             String coefficientText = driver.

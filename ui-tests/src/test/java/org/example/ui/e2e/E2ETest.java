@@ -21,6 +21,7 @@ public class E2ETest extends BaseE2ETest {
         setup();
         loginToAdmin();
     }
+
     @BeforeEach
     public void setUp() {
         navigateToConfig();
@@ -30,7 +31,7 @@ public class E2ETest extends BaseE2ETest {
     }
 
     @Test
-    public void shouldAddLanguageAndSeeItInUserUI() {
+    public void addLanguage_shouldBeVisibleInUserInterface() {
         String language = "french";
         adminSteps.addLanguageIfNotExist(language);
         goToUserSite();
@@ -40,7 +41,7 @@ public class E2ETest extends BaseE2ETest {
     }
 
     @Test
-    public void checkIfAllEventsButtonIsDisplayed() {
+    public void allEventsButton_shouldBeDisplayed_whenEventCountIsGreaterThanOrEqualToTen() {
         int count = 11;
         highlightsSteps.addHighlights("french", count);
         goToUserSite();
@@ -53,7 +54,7 @@ public class E2ETest extends BaseE2ETest {
     }
 
     @Test
-    public void deletingSportShouldDeleteItOnSite(){
+    public void deletingSport_shouldRemoveItFromUserSite() {
         String removed = highlightsSteps.deleteFirstSport();
         goToUserSite();
         assertFalse(userSteps.checkTitleInSportsList(removed), "Спорт не был удалён и по-прежнему отображается на главной");

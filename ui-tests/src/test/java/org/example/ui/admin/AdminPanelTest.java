@@ -22,14 +22,14 @@ public class AdminPanelTest extends BaseAdminPanelTest {
     }
 
     @Test
-    public void shouldAddNewLanguageIfMissing(){
+    public void shouldAddNewLanguageIfNotPresent() {
         String language = "french";
         languageSteps.addLanguageIfNotExist(language);
         assertTrue(languageSteps.isLanguageVisible(language), "Язык не был добавлен");
     }
 
     @Test
-    public void shouldAddNewHighlightsIfMissing(){
+    public void shouldAddNewHighlightsIfNotSufficient() {
         String language = "french";
         int count = 11;
         highlightsSteps.addHighlights(language, count);
@@ -37,27 +37,27 @@ public class AdminPanelTest extends BaseAdminPanelTest {
     }
 
     @Test
-    public void shouldRemoveLanguageIfExist(){
+    public void shouldRemoveLanguageIfPresent() {
         String language = "french";
         languageSteps.removeLanguageIfExists(language);
         assertFalse(languageSteps.isLanguageVisible(language), "Язык не был удалён");
     }
 
     @Test
-    public void shouldRemoveSportsIfExist(){
+    public void shouldRemoveFirstSportIfPresent() {
         int countOfSports = highlightsSteps.getCountOfAddedSports();
         highlightsSteps.deleteFirstSport();
         assertEquals(highlightsSteps.getCountOfAddedSports(), countOfSports - 1);
     }
 
     @Test
-    public void shouldDisplayErrorWithIncorrectDate(){
+    public void shouldDisplayErrorMessageForInvalidDateFormat() {
         String message = highlightsSteps.setIncorrectDate();
         assertEquals("Invalid Date Format", message, "Должно отображаться корректное сообщение");
     }
 
     @Test
-    public void shouldCopyEventsFromDefaultLanguageToAnother(){
+    public void shouldCopyEventsFromDefaultLanguageToAnotherLanguage() {
         String language = "french";
         languageSteps.addLanguageIfNotExist(language);
         List<String> eventsBefore = highlightsSteps.getAddedHighlights(language);

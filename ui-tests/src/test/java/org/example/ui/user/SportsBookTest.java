@@ -17,7 +17,7 @@ public class SportsBookTest extends BaseSportsBookTest {
     }
 
     @Test
-    public void shouldDisplayLiveNowInCorrectLanguage() {
+    public void shouldDisplayLiveNowTextInExpectedLanguage() {
         String expectedTitle = "En direct maintenant";
         assertTrue(
                 sportsBookSteps.isLiveNowTextCorrect(expectedTitle),
@@ -26,13 +26,13 @@ public class SportsBookTest extends BaseSportsBookTest {
     }
 
     @Test
-    public void allEventsButtonIsDisplayed(){
+    public void shouldDisplayViewAllEventsButtonWhenEventsCountIsGreaterThanOrEqualToTen() {
         assertTrue(sportsBookSteps.allEventsButtonIsDisplayed(),
                 "Кнопка view all events должна отображаться, если событий >= 10");
     }
 
     @Test
-    public void checkCoefficients(){
+    public void shouldCheckCoefficientsInSportsList() {
         sportsBookSteps.checkCoefficientInSportsList();
     }
 }
