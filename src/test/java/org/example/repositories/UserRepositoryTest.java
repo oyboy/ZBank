@@ -1,0 +1,83 @@
+package org.example.repositories;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import org.example.models.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@Epic("User Management")
+@Feature("User data storage and search")
+@DisplayName("Unit tests for UserRepository")
+public class UserRepositoryTest {
+    @TempDir
+    Path tempDir;
+    private UserRepository userRepository;
+
+    @BeforeEach
+    public void setUp() throws IOException {
+        Path testUserPath = tempDir.resolve("test_users.json");
+        userRepository = new UserRepository(testUserPath.toString());
+
+        Files.write(testUserPath, new ObjectMapper().writeValueAsBytes(new ArrayList<>()));
+    }
+
+    @Test
+    @DisplayName("Saving and retrieving a user")
+    public void testSaveAndGetUser() {
+        User user = new User("John Doe", "john@example.com", "pass123");
+        userRepository.save(user);
+
+        List<User> allUsers = userRepository.getAllUsers();
+        assertEquals(1, allUsers.size());
+        assertEquals("John Doe", allUsers.get(0).getName());
+
+        Optional<User> userByEmail = userRepository.getUserByEmail("john@example.com");
+        assertTrue(userByEmail.isPresent());
+        assertEquals(user.getId(), userByEmail.get().getId());
+    }
+
+    @Test
+    @DisplayName("Updating an existing user")
+    public void testUpdateUser() {
+        User user = new User("John Doe", "john@example.com", "pass123");
+        userRepository.save(user);
+
+        User updatedUser = new User("John Smith", "john@example.com", "newpass456");
+        userRepository.save(updatedUser);
+
+        List<User> allUsers = userRepository.getAllUsers();
+        assertEquals(1, allUsers.size());
+        assertEquals("John Smith", allUsers.get(0).getName());
+        assertEquals("newpass456", allUsers.get(0).getPassword());
+    }
+
+    @Test
+    @DisplayName("Retrieving a user by existing email")
+    public void testGetUserByEmail() {
+        User user = new User("John Doe", "john@example.com", "pass123");
+        userRepository.save(user);
+
+        Optional<User> userByEmail = userRepository.getUserByEmail("john@example.com");
+        assertTrue(userByEmail.isPresent());
+    }
+
+    @Test
+    @DisplayName("Retrieving a user by non-existent email")
+    public void testGetUserByInvalidEmail() {
+        Optional<User> user = userRepository.getUserByEmail("nonexistent@example.com");
+        assertTrue(user.isEmpty());
+    }
+}

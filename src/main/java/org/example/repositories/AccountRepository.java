@@ -11,8 +11,16 @@ import java.util.List;
 import java.util.Optional;
 
 public class AccountRepository {
-    private final String ACCOUNT_PATH = "database/accounts.json";
+    private final String ACCOUNT_PATH;
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public AccountRepository() {
+        ACCOUNT_PATH = "database/accounts.json";
+    }
+
+    public AccountRepository(String ACCOUNT_PATH) {
+        this.ACCOUNT_PATH = ACCOUNT_PATH;
+    }
 
     public void save(Account account) {
         List<Account> accounts = getAllAccounts();

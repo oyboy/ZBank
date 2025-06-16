@@ -2,7 +2,6 @@ package org.example.repositories;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -16,8 +15,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TransactionRepository {
-    private final String TRANSACTION_PATH = "database/transactions.json";
+    private final String TRANSACTION_PATH;
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public TransactionRepository() {
+        TRANSACTION_PATH = "database/transactions.json";
+    }
+
+    public TransactionRepository(String TRANSACTION_PATH) {
+        this.TRANSACTION_PATH = TRANSACTION_PATH;
+    }
+
     static {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

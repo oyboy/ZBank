@@ -1,5 +1,6 @@
 package org.example.services;
 
+import lombok.RequiredArgsConstructor;
 import org.example.models.Account;
 import org.example.models.Transaction;
 import org.example.models.User;
@@ -10,7 +11,7 @@ import org.example.repositories.TransactionRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@RequiredArgsConstructor
 public class BankService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
