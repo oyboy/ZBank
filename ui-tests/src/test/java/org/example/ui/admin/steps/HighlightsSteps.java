@@ -48,7 +48,7 @@ public class HighlightsSteps {
     }
 
     public void copyEvents(String toLanguage){
-        addHighlights("Default", 2);
+        addHighlights("Default", 1);
         adminPanelPage.selectLanguage(toLanguage);
         adminPanelPage.clickCopyEventsButton();
         adminPanelPage.clickSaveConfigurationButton();

@@ -81,7 +81,7 @@ public class AdminPanelTest extends BaseAdminPanelTest {
     public void shouldCopyEventsFromDefaultLanguageToAnotherLanguage() {
         String language = "french";
         languageSteps.addLanguageIfNotExist(language);
-        List<String> eventsBefore = highlightsSteps.getAddedHighlights(language);
+        List<String> eventsBefore = highlightsSteps.getAddedHighlights("default");
 
         highlightsSteps.copyEvents(language);
         List<String> eventsAfter = highlightsSteps.getAddedHighlights(language);
