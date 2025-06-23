@@ -4,6 +4,7 @@
 - [Структура проекта](#структура-проекта)
 - [Юнит-тесты](#юнит-тесты)
 - [UI-тесты](#ui-тесты)
+- [API-тесты](#api-тесты)
 ## Что это
 Приложение, моделирующее простую банковскую систему с базовыми возможностями: создание пользователей, операции со счетом (внесение, снятие, перевод), просмотр профиля и истории транзакций.
 
@@ -113,6 +114,16 @@ Transferred 500.0 from account 86ccf11e-1e7b-4994-8491-53a97cdc3f7c to account 8
 login_page = https://sb2admin-altenar2-stage.biahosted.com/Account/Login?ReturnUrl=%2F
 config_page = https://sb2admin-altenar2-stage.biahosted.com/v2/highlights/configs
 sports_book_page = https://sb2clientstatic-altenar2-stage.biahosted.com/?integration=skintest&culture=fr-fr#/
+
+login = <валидный логин>
+password = <валидный пароль>
+```
+
+## API-тесты
+Для запуска тестов нужно в ресурсах создать файл **conf.properties** и добавить в него следующее:
+```
+admin_page = https://sb2admin-altenar2-stage.biahosted.com/
+front_page = https://sb2frontend-altenar2-stage.biahosted.com
 
 login = <валидный логин>
 password = <валидный пароль>
