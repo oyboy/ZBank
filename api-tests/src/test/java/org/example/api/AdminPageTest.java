@@ -62,7 +62,15 @@ public class AdminPageTest {
                 .extract()
                 .response()
                 .as(GetChampionshipResponse.class);
-        return response.getSport();
+
+        List<Sport> sports = response.getSport();
+        for (int i = 0; i < sports.size(); i++) {
+            Sport sport = sports.get(i);
+            sport.setOrder(i + 1);
+            sport.setEnabled(true);
+        }
+
+        return sports;
     }
     private ConfigSettingsResponse getConfigSettings(){
         ConfigSettingsResponse configSettings = given()
