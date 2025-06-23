@@ -3,6 +3,9 @@ package org.example.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.qameta.allure.Description;
+import io.qameta.allure.Story;
+import io.qameta.allure.TmsLink;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.example.api.config.ConfigReader;
@@ -58,6 +61,9 @@ public class UserPageTest {
     }
 
     @Test
+    @Description("Проверка перевода элементов страницы")
+    @Story("Frontend_Переводы")
+    @TmsLink("TC_USER_01")
     public void getLanguagesList() {
         GenericRequest request = baseRequestBuilder()
                 .timezoneOffset(-180)
@@ -77,6 +83,9 @@ public class UserPageTest {
     }
 
     @Test
+    @Description("Проверка, что кнопка 'View All Events' не отображается, если событий < 10")
+    @Story("Frontend_Показ событий")
+    @TmsLink("TC_USER_02")
     public void checkViewAllEventsButtonIsNotDisplayed() {
         GenericRequest request = baseRequestBuilder()
                 .sportId(74)
@@ -93,6 +102,9 @@ public class UserPageTest {
     }
 
     @Test
+    @Description("Проверка, что кнопка 'View All Events' отображается, если событий >= 10")
+    @Story("Frontend_Показ событий")
+    @TmsLink("TC_USER_03")
     public void checkViewAllEventsButtonIsDisplayed() {
         GenericRequest request = baseRequestBuilder()
                 .sportId(76)
@@ -109,6 +121,9 @@ public class UserPageTest {
     }
 
     @Test
+    @Description("Проверка, что метод GetHighlights возвращает список событий")
+    @Story("Frontend_Хайлайты")
+    @TmsLink("TC_USER_04")
     public void callingGetHighlightsReturnsNonEmptyEventList() {
         GenericRequest request = baseRequestBuilder()
                 .langId(8)
@@ -124,6 +139,9 @@ public class UserPageTest {
     }
 
     @Test
+    @Description("Проверка получения избранных чемпионатов при корректной дате")
+    @Story("Frontend_Избранные чемпионаты")
+    @TmsLink("TC_USER_05")
     public void getFavouriteChampsWithCorrectDate() {
         Instant startDate = Instant.now();
         Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).plusMonths(1).toInstant();
@@ -142,6 +160,9 @@ public class UserPageTest {
     }
 
     @Test
+    @Description("Проверка, что при некорректной дате избранные чемпионаты не возвращаются")
+    @Story("Frontend_Избранные чемпионаты")
+    @TmsLink("TC_USER_06")
     public void getFavouriteChampsWithUncorrectDate() {
         Instant startDate = Instant.now();
         Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).minusMonths(1).toInstant();

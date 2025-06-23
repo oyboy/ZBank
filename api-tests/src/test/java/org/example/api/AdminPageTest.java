@@ -3,6 +3,9 @@ package org.example.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.qameta.allure.Description;
+import io.qameta.allure.Story;
+import io.qameta.allure.TmsLink;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.example.api.config.ConfigReader;
@@ -88,6 +91,9 @@ public class AdminPageTest {
     }
 
     @Test
+    @Description("Проверка обновления конфигурации при удалении языковой вкладки")
+    @Story("Admin_Удаление языка")
+    @TmsLink("TC_ADMIN_01")
     public void testRemoveLanguage() throws Exception {
         ConfigSettingsResponse configSettings = getConfigSettings();
         List<Sport> sportsFromApi = getSportsFromChampionships();
@@ -117,6 +123,9 @@ public class AdminPageTest {
 
 
     @Test
+    @Description("Проверка получения чемпионатов при корректной дате")
+    @Story("Admin_Чемпионаты")
+    @TmsLink("TC_ADMIN_02")
     public void getChampionshipsWithCorrectDate() {
         Instant startDate = Instant.now();
         Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).plusDays(1).toInstant();
@@ -144,7 +153,11 @@ public class AdminPageTest {
         boolean success = jsonPath.getBoolean("Success");
         assertTrue(success, "Запрос должен вернуть список событий при корректном диапазоне дат");
     }
+
     @Test
+    @Description("Проверка ошибки при запросе чемпионатов с некорректной датой")
+    @Story("Admin_Чемпионаты")
+    @TmsLink("TC_ADMIN_03")
     public void getChampionshipsWithIncorrectDate() {
         Instant startDate = Instant.now();
         Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).minusDays(1).toInstant();
