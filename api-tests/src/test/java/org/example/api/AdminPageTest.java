@@ -9,10 +9,13 @@ import org.example.api.model.request.GenericRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminPageTest {
@@ -131,7 +134,42 @@ public class AdminPageTest {
         boolean isDisplayed = jsonPath.getBoolean("Result.ShowMoreEvents");
         int eventsCount = jsonPath.getInt("Result.EventsCount");
 
-        assertThat("Количество событий должно быть больше или равно 10", eventsCount >= 10);
+        assertThat("Количество событий должно быть больше или равно 10", eventsCount, greaterThanOrEqualTo(10));
         assertTrue(isDisplayed, "Кнопка показа всех событий должна отображаться");
     }
+    @Test
+    public void callingGetHighlightsReturnsNonEmptyEventList(){
+        GenericRequest request = GenericRequest.builder()
+                .timezoneOffset(420)
+                .langId(39)
+                .skinName("betsonic")
+                .configId(1)
+                .culture("fr-fr")
+                .countryCode("RU")
+                .deviceType("Desktop")
+                .numformat("en")
+                .integration("skintest")
+                .sportId(76)
+                .showAllEvents(false)
+                .count(10)
+                .hasStreaming(false)
+                .build();
+
+        Response response = given()
+                .log().all()
+                .baseUri(ConfigReader.getProperty("front_page"))
+                .cookies(cookie)
+                .queryParams(objectMapper.convertValue(request, Map.class))
+                .when()
+                .get("/api/Sportsbook/GetHighlights")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        JsonPath jsonPath = response.jsonPath();
+        List<Object> events = jsonPath.getList("Result.Items");
+        assertFalse(events.isEmpty(), "Массив не должен быть пуст, если есть метод вызывается");
+    }
+    
 }
