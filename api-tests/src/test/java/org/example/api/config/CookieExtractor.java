@@ -12,7 +12,7 @@ public class CookieExtractor {
 
     public static Map<String, String> getCookie() {
         if (cookie == null) {
-            RestAssured.baseURI = ConfigReader.getProperty("base_page");
+            RestAssured.baseURI = ConfigReader.getProperty("admin_page");
             Response response = given()
                     .param("username", ConfigReader.getProperty("username"))
                     .param("password", ConfigReader.getProperty("password"))

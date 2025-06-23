@@ -7,17 +7,16 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.example.api.config.ConfigReader;
 import org.example.api.config.CookieExtractor;
-import org.example.api.model.request.GenericRequest;
+import org.example.api.model.request.ChampionshipsRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.time.*;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminPageTest {
@@ -32,139 +31,60 @@ public class AdminPageTest {
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
-    private GenericRequest.GenericRequestBuilder baseRequestBuilder() {
-        return GenericRequest.builder()
-                .timezoneOffset(420)
-                .langId(39)
-                .skinName("betsonic")
-                .configId(1)
-                .culture("fr-fr")
-                .countryCode("RU")
-                .deviceType("Desktop")
-                .numformat("en")
-                .integration("skintest");
-    }
+    @Test
+    public void getChampionshipsWithCorrectDate() {
+        Instant startDate = Instant.now();
+        Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).plusDays(1).toInstant();
 
-    private Response sendRequest(String endpoint, GenericRequest request) {
-        return given()
+        ChampionshipsRequest request = ChampionshipsRequest.builder()
+                .sportIds(new int[]{74, 76})
+                .dateFrom(startDate)
+                .dateTo(endDate)
+                .build();
+
+        Response response = given()
                 .log().all()
-                .baseUri(ConfigReader.getProperty("front_page"))
+                .baseUri(ConfigReader.getProperty("admin_page"))
+                .header("Content-Type", "application/json")
                 .cookies(cookie)
-                .queryParams(objectMapper.convertValue(request, Map.class))
                 .when()
-                .get(endpoint)
+                .body(objectMapper.convertValue(request, Map.class))
+                .post("/Api/HighlightsManager/GetChampionships")
                 .then()
                 .statusCode(200)
                 .extract()
                 .response();
-    }
-
-    @Test
-    public void getLanguagesList() {
-        GenericRequest request = baseRequestBuilder()
-                .timezoneOffset(-180)
-                .langId(8)
-                .countryCode("")
-                .build();
-
-        Response response = sendRequest("/api/Translation/StaticTranslations", request);
 
         JsonPath jsonPath = response.jsonPath();
-        Map<String, String> res = jsonPath.get("Result");
-
-        assertFalse(res.isEmpty(), "Translation list should not be empty");
-        assertEquals("Aujourd’hui", res.get("Today"), "Translation for 'Today' is incorrect");
-        assertEquals("Mise", res.get("Stake"), "Translation for 'Stake' is incorrect");
-        assertEquals("Paris introuvables", res.get("No bets found"), "Translation for 'No bets found' is incorrect");
+        boolean success = jsonPath.getBoolean("Success");
+        assertTrue(success, "Запрос должен вернуть список событий при корректном диапазоне дат");
     }
-
     @Test
-    public void checkViewAllEventsButtonIsNotDisplayed() {
-        GenericRequest request = baseRequestBuilder()
-                .sportId(74)
-                .showAllEvents(false)
-                .count(10)
-                .hasStreaming(false)
-                .build();
-
-        Response response = sendRequest("/api/Sportsbook/GetUpcoming", request);
-
-        JsonPath jsonPath = response.jsonPath();
-        boolean isDisplayed = jsonPath.getBoolean("Result.ShowMoreEvents");
-        int eventsCount = jsonPath.getInt("Result.EventsCount");
-
-        assertThat("Количество событий должно быть меньше 10", eventsCount < 10);
-        assertFalse(isDisplayed, "Кнопка показа всех событий не должна отображаться");
-    }
-
-    @Test
-    public void checkViewAllEventsButtonIsDisplayed() {
-        GenericRequest request = baseRequestBuilder()
-                .sportId(76)
-                .showAllEvents(false)
-                .count(10)
-                .hasStreaming(false)
-                .build();
-
-        Response response = sendRequest("/api/Sportsbook/GetUpcoming", request);
-
-        JsonPath jsonPath = response.jsonPath();
-        boolean isDisplayed = jsonPath.getBoolean("Result.ShowMoreEvents");
-        int eventsCount = jsonPath.getInt("Result.EventsCount");
-
-        assertThat("Количество событий должно быть больше или равно 10", eventsCount, greaterThanOrEqualTo(10));
-        assertTrue(isDisplayed, "Кнопка показа всех событий должна отображаться");
-    }
-
-    @Test
-    public void callingGetHighlightsReturnsNonEmptyEventList() {
-        GenericRequest request = baseRequestBuilder()
-                .sportId(76)
-                .showAllEvents(false)
-                .count(10)
-                .hasStreaming(false)
-                .build();
-
-        Response response = sendRequest("/api/Sportsbook/GetHighlights", request);
-
-        JsonPath jsonPath = response.jsonPath();
-        List<Object> events = jsonPath.getList("Result.Items");
-        assertFalse(events.isEmpty(), "Массив не должен быть пуст, если метод вызывается");
-    }
-
-    @Test
-    public void getFavouriteChampsWithCorrectDate() {
+    public void getChampionshipsWithIncorrectDate() {
         Instant startDate = Instant.now();
-        Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).plusMonths(1).toInstant();
+        Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).minusDays(1).toInstant();
 
-        GenericRequest request = baseRequestBuilder()
-                .period("periodmonth")
-                .startDate(startDate)
-                .endDate(endDate)
+        ChampionshipsRequest request = ChampionshipsRequest.builder()
+                .sportIds(new int[]{74, 76})
+                .dateFrom(startDate)
+                .dateTo(endDate)
                 .build();
 
-        Response response = sendRequest("/api/Sportsbook/GetFavouritesChamps", request);
+        Response response = given()
+                .log().all()
+                .baseUri(ConfigReader.getProperty("admin_page"))
+                .header("Content-Type", "application/json")
+                .cookies(cookie)
+                .when()
+                .body(objectMapper.convertValue(request, Map.class))
+                .post("/Api/HighlightsManager/GetChampionships")
+                .then()
+                .statusCode(400)
+                .extract()
+                .response();
 
         JsonPath jsonPath = response.jsonPath();
-        List<Object> events = jsonPath.getList("Result");
-        assertFalse(events.isEmpty(), "Список событий не должен пуст при корректной дате");
-    }
-
-    @Test
-    public void getFavouriteChampsWithUncorrectDate() {
-        Instant startDate = Instant.now();
-        Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).minusMonths(1).toInstant();
-
-        GenericRequest request = baseRequestBuilder()
-                .period("periodmonth")
-                .startDate(startDate)
-                .endDate(endDate)
-                .build();
-
-        Response response = sendRequest("/api/Sportsbook/GetFavouritesChamps", request);
-
-        JsonPath jsonPath = response.jsonPath();
-        List<Object> events = jsonPath.getList("Result");
-        assertTrue(events.isEmpty(), "Список событий должен быть пуст при некорректной дате");
+        boolean success = jsonPath.getBoolean("Success");
+        assertFalse(success, "Запрос должен вернуть ошибку при некорректном диапазоне дат");
     }
 }
