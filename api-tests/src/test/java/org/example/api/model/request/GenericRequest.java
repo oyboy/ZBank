@@ -8,6 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -53,4 +57,13 @@ public class GenericRequest {
 
     @JsonProperty("hasStreaming")
     private Boolean hasStreaming;
+
+    @JsonProperty("period")
+    private String period;
+
+    @JsonProperty("startDate")
+    private Instant startDate;
+
+    @JsonProperty("endDate")
+    private Instant endDate;
 }
