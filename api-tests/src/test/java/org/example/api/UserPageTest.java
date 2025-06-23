@@ -6,7 +6,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.example.api.config.ConfigReader;
-import org.example.api.config.CookieExtractor;
 import org.example.api.model.request.GenericRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
