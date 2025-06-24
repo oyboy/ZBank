@@ -1,11 +1,11 @@
-package models.request;
+package models.requests;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import models.response.config_settings.HighlightEvent;
-import models.response.config_settings.LanguageTab;
-import models.response.config_settings.Sport;
+import models.entities.HighlightEvent;
+import models.entities.LanguageTab;
+import models.entities.Sport;
 
 import java.util.List;
 

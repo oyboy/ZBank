@@ -1,7 +1,10 @@
-package models.response.config_settings;
+package models.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-public class TopEvent {
+import lombok.Data;
+
+@Data
+public class Event {
     @JsonProperty("EventId")
     private Integer eventId;
     @JsonProperty("Name")

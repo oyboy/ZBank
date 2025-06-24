@@ -1,23 +1,17 @@
-package models.response.config_settings;
+package models.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Sport {
+public class Datum {
     @JsonProperty("SportId")
     private Integer sportId;
     @JsonProperty("Name")
     private String name;
-    @JsonProperty("Order")
-    private int order;
-    @JsonProperty("IsEnabled")
-    private boolean isEnabled;
     @JsonProperty("Count")
-    private int count;
+    private Integer count;
     @JsonProperty("Categories")
     private List<Category> categories;
 }

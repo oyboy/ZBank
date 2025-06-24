@@ -1,4 +1,4 @@
-package models.response.config_settings;
+package models.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

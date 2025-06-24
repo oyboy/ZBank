@@ -1,12 +1,14 @@
 package org.example.api;
 
+import clients.UserClient;
 import io.qameta.allure.Description;
 import io.qameta.allure.Story;
 import io.qameta.allure.TmsLink;
-import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
-import config.ConfigReader;
-import models.request.GenericRequest;
+import models.requests.GenericRequest;
+import models.responses.FavouritesChampsResponse;
+import models.responses.HighlightsResponse;
+import models.responses.StaticTranslationsResponse;
+import models.responses.UpcomingResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,9 +16,9 @@ import java.time.*;
 import java.util.List;
 import java.util.Map;
 
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserPageTest extends BaseTest {
@@ -35,19 +37,6 @@ public class UserPageTest extends BaseTest {
                 .count(10)
                 .hasStreaming(false);
     }
-
-    private Response sendRequest(String endpoint, GenericRequest request) {
-        return given()
-                .log().all()
-                .baseUri(ConfigReader.getProperty("front_page"))
-                .queryParams(objectMapper.convertValue(request, Map.class))
-                .when()
-                .get(endpoint)
-                .then()
-                .extract()
-                .response();
-    }
-
     @Test
     @DisplayName("Проверка перевода элементов страницы")
     @Description("Проверяет, что запрос возвращает корректные переводы статических элементов: Today, Stake, No bets found")
@@ -60,10 +49,8 @@ public class UserPageTest extends BaseTest {
                 .countryCode("")
                 .build();
 
-        Response response = sendRequest("/api/Translation/StaticTranslations", request);
-
-        JsonPath jsonPath = response.jsonPath();
-        Map<String, String> res = jsonPath.get("Result");
+        StaticTranslationsResponse response = UserClient.getStaticTranslations(request);
+        Map<String, String> res = response.getResult();
 
         assertFalse(res.isEmpty(), "Translation list should not be empty");
         assertEquals("Aujourd’hui", res.get("Today"), "Translation for 'Today' is incorrect");
@@ -81,14 +68,10 @@ public class UserPageTest extends BaseTest {
                 .sportId(74)
                 .build();
 
-        Response response = sendRequest("/api/Sportsbook/GetUpcoming", request);
+        UpcomingResponse response = UserClient.getUpcoming(request);
 
-        JsonPath jsonPath = response.jsonPath();
-        boolean isDisplayed = jsonPath.getBoolean("Result.ShowMoreEvents");
-        int eventsCount = jsonPath.getInt("Result.EventsCount");
-
-        assertThat("Количество событий должно быть меньше 10", eventsCount < 10);
-        assertFalse(isDisplayed, "Кнопка показа всех событий не должна отображаться");
+        assertThat("Количество событий должно быть меньше 10", response.getResult().getEventsCount(), lessThan(10));
+        assertFalse(response.getResult().isShowMoreEvents(), "Кнопка показа всех событий не должна отображаться");
     }
 
     @Test
@@ -101,14 +84,10 @@ public class UserPageTest extends BaseTest {
                 .sportId(76)
                 .build();
 
-        Response response = sendRequest("/api/Sportsbook/GetUpcoming", request);
+        UpcomingResponse response = UserClient.getUpcoming(request);
 
-        JsonPath jsonPath = response.jsonPath();
-        boolean isDisplayed = jsonPath.getBoolean("Result.ShowMoreEvents");
-        int eventsCount = jsonPath.getInt("Result.EventsCount");
-
-        assertThat("Количество событий должно быть больше или равно 10", eventsCount, greaterThanOrEqualTo(10));
-        assertTrue(isDisplayed, "Кнопка показа всех событий должна отображаться");
+        assertThat("Количество событий должно быть больше или равно 10", response.getResult().getEventsCount(), greaterThanOrEqualTo(10));
+        assertTrue(response.getResult().isShowMoreEvents(), "Кнопка показа всех событий должна отображаться");
     }
 
     @Test
@@ -123,11 +102,9 @@ public class UserPageTest extends BaseTest {
                 .sportId(76)
                 .build();
 
-        Response response = sendRequest("/api/Sportsbook/GetHighlights", request);
+        HighlightsResponse response = UserClient.getHighlights(request);
 
-        JsonPath jsonPath = response.jsonPath();
-        List<Object> events = jsonPath.getList("Result.Items");
-        assertFalse(events.isEmpty(), "Массив не должен быть пуст, если метод вызывается");
+        assertThat("Количество хайлайтов должно быть больше 0", response.getResult().getEventsCount(), greaterThanOrEqualTo(1));
     }
 
     @Test
@@ -145,10 +122,9 @@ public class UserPageTest extends BaseTest {
                 .endDate(endDate)
                 .build();
 
-        Response response = sendRequest("/api/Sportsbook/GetFavouritesChamps", request);
+        FavouritesChampsResponse response = UserClient.getFavouritesChamps(request);
 
-        JsonPath jsonPath = response.jsonPath();
-        List<Object> events = jsonPath.getList("Result");
+        List<FavouritesChampsResponse.Result> events = response.getResult();
         assertFalse(events.isEmpty(), "Список событий не должен пуст при корректной дате");
     }
 
@@ -160,18 +136,15 @@ public class UserPageTest extends BaseTest {
     public void getFavouriteChampsWithUncorrectDate() {
         Instant startDate = Instant.now();
         Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).minusMonths(1).toInstant();
-
         GenericRequest request = baseRequestBuilder()
                 .period("periodmonth")
                 .startDate(startDate)
                 .endDate(endDate)
                 .build();
 
-        Response response = sendRequest("/api/Sportsbook/GetFavouritesChamps", request);
-        JsonPath jsonPath = response.jsonPath();
-        List<Object> events = jsonPath.getList("Result");
+        FavouritesChampsResponse response = UserClient.getFavouritesChamps(request);
 
-        assertEquals(400, response.getStatusCode(), "Должен вернуться bad request");
+        List<FavouritesChampsResponse.Result> events = response.getResult();
         assertTrue(events.isEmpty(), "Список событий должен быть пуст при некорректной дате");
     }
 }

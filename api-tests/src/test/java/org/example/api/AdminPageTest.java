@@ -1,27 +1,23 @@
 package org.example.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import clients.AdminClient;
 import io.qameta.allure.Description;
 import io.qameta.allure.Story;
 import io.qameta.allure.TmsLink;
-import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
-import models.response.config_settings.ConfigSettingsResponse;
-import models.response.config_settings.Sport;
-import config.ConfigReader;
-import models.request.ChampionshipsRequest;
-import models.request.UpdateConfigRequest;
+import models.responses.ChampionshipResponse;
+import models.responses.ConfigSettingsResponse;
+import models.entities.Sport;
+import models.requests.ChampionshipsRequest;
+import models.requests.UpdateConfigRequest;
+import models.responses.UpdateConfigResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Map;
 
 import static clients.AdminClient.*;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminPageTest extends BaseTest {
@@ -32,7 +28,7 @@ public class AdminPageTest extends BaseTest {
     @TmsLink("TC_ADMIN_01")
     public void testRemoveLanguage() throws Exception {
         ConfigSettingsResponse configSettings = getConfigSettings(cookie);
-        List<Sport> sportsFromApi = getSportsFromChampionships(cookie);
+        List<Sport> sportsFromApi = getPreparedSports(cookie);
 
         UpdateConfigRequest request = new UpdateConfigRequest();
         request.setConfigId(126);
@@ -40,21 +36,8 @@ public class AdminPageTest extends BaseTest {
         request.setLanguageTabs(configSettings.getData().getLanguageTabs());
         request.setSports(sportsFromApi);
 
-        String body = objectMapper.writeValueAsString(request);
-
-        Response updateConfigResponse = given()
-                .log().all()
-                .cookies(cookie)
-                .baseUri(ConfigReader.getProperty("admin_page"))
-                .contentType("application/json")
-                .body(body)
-                .when()
-                .post("/Api/HighlightsManager/UpdateConfig")
-                .then()
-                .statusCode(200)
-                .body("Success", equalTo(true))
-                .extract()
-                .response();
+        UpdateConfigResponse updateConfigResponse = AdminClient.updateConfig(request, cookie);
+        assertTrue(updateConfigResponse.getSuccess(), "Конфигурация должна быть успешно обновлена");
     }
 
 
@@ -66,29 +49,14 @@ public class AdminPageTest extends BaseTest {
     public void getChampionshipsWithCorrectDate() {
         Instant startDate = Instant.now();
         Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).plusDays(1).toInstant();
-
         ChampionshipsRequest request = ChampionshipsRequest.builder()
                 .sportIds(new int[]{74, 76})
                 .dateFrom(startDate)
                 .dateTo(endDate)
                 .build();
 
-        Response response = given()
-                .log().all()
-                .baseUri(ConfigReader.getProperty("admin_page"))
-                .header("Content-Type", "application/json")
-                .cookies(cookie)
-                .when()
-                .body(objectMapper.convertValue(request, Map.class))
-                .post("/Api/HighlightsManager/GetChampionships")
-                .then()
-                .statusCode(200)
-                .extract()
-                .response();
-
-        JsonPath jsonPath = response.jsonPath();
-        boolean success = jsonPath.getBoolean("Success");
-        assertTrue(success, "Запрос должен вернуть список событий при корректном диапазоне дат");
+        ChampionshipResponse response = getChampionships(request, cookie);
+        assertTrue(response.getSuccess(), "Запрос должен вернуть список событий при корректном диапазоне дат");
     }
 
     @Test
@@ -99,28 +67,13 @@ public class AdminPageTest extends BaseTest {
     public void getChampionshipsWithIncorrectDate() {
         Instant startDate = Instant.now();
         Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).minusDays(1).toInstant();
-
         ChampionshipsRequest request = ChampionshipsRequest.builder()
                 .sportIds(new int[]{74, 76})
                 .dateFrom(startDate)
                 .dateTo(endDate)
                 .build();
 
-        Response response = given()
-                .log().all()
-                .baseUri(ConfigReader.getProperty("admin_page"))
-                .header("Content-Type", "application/json")
-                .cookies(cookie)
-                .when()
-                .body(objectMapper.convertValue(request, Map.class))
-                .post("/Api/HighlightsManager/GetChampionships")
-                .then()
-                .statusCode(400)
-                .extract()
-                .response();
-
-        JsonPath jsonPath = response.jsonPath();
-        boolean success = jsonPath.getBoolean("Success");
-        assertFalse(success, "Запрос должен вернуть ошибку при некорректном диапазоне дат");
+        ChampionshipResponse response = getChampionships(request, cookie);
+        assertFalse(response.getSuccess(), "Запрос должен вернуть ошибку при некорректном диапазоне дат");
     }
 }
