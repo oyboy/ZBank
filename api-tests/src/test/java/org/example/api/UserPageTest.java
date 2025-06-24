@@ -1,16 +1,12 @@
 package org.example.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.qameta.allure.Description;
 import io.qameta.allure.Story;
 import io.qameta.allure.TmsLink;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import org.example.api.config.ConfigReader;
-import org.example.api.model.request.GenericRequest;
-import org.junit.jupiter.api.BeforeAll;
+import config.ConfigReader;
+import models.request.GenericRequest;
 import org.junit.jupiter.api.Test;
 
 import java.time.*;
@@ -22,16 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserPageTest {
-    private static ObjectMapper objectMapper;
-
-    @BeforeAll
-    public static void setUp() {
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    }
-
+public class UserPageTest extends BaseTest {
     private GenericRequest.GenericRequestBuilder baseRequestBuilder() {
         return GenericRequest.builder()
                 .timezoneOffset(420)

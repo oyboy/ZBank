@@ -1,4 +1,4 @@
-package org.example.api.model.request;
+package models.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

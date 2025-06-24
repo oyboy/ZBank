@@ -1,4 +1,4 @@
-package org.example.api.model.response.config_settings;
+package models.response.config_settings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
