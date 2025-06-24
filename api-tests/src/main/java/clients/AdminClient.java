@@ -21,6 +21,15 @@ public class AdminClient {
     private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
     public static List<Sport> getSportsFromChampionships(Map<String, String> cookie){
+        List<Sport> sports = getChampionships(cookie).getSport();
+        for (int i = 0; i < sports.size(); i++) {
+            Sport sport = sports.get(i);
+            sport.setOrder(i + 1);
+            sport.setEnabled(true);
+        }
+        return sports;
+    }
+    private static GetChampionshipResponse getChampionships(Map<String, String> cookie){
         Instant startDate = Instant.now();
         Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).plusDays(1).toInstant();
 
@@ -30,7 +39,7 @@ public class AdminClient {
                 .dateTo(endDate)
                 .build();
 
-        GetChampionshipResponse response = given()
+        return given()
                 .log().all()
                 .baseUri(ConfigReader.getProperty("admin_page"))
                 .header("Content-Type", "application/json")
@@ -43,18 +52,10 @@ public class AdminClient {
                 .extract()
                 .response()
                 .as(GetChampionshipResponse.class);
-
-        List<Sport> sports = response.getSport();
-        for (int i = 0; i < sports.size(); i++) {
-            Sport sport = sports.get(i);
-            sport.setOrder(i + 1);
-            sport.setEnabled(true);
-        }
-
-        return sports;
     }
+
     public static ConfigSettingsResponse getConfigSettings(Map<String, String> cookie){
-        ConfigSettingsResponse configSettings = given()
+        return given()
                 .cookies(cookie)
                 .baseUri(ConfigReader.getProperty("admin_page"))
                 .when()
@@ -65,10 +66,10 @@ public class AdminClient {
                 .extract()
                 .response()
                 .as(ConfigSettingsResponse.class);
-        return configSettings;
     }
+
     public static List<HighlightEvent> getHighlightEvents(Map<String, String> cookie){
-        List<HighlightEvent> highlights = getConfigSettings(cookie).getData().getEvents().stream().map(event -> {
+        return getConfigSettings(cookie).getData().getEvents().stream().map(event -> {
             HighlightEvent h = new HighlightEvent();
             h.setEventId(event.getEventId());
             h.setOrder(event.getOrder() != null ? event.getOrder() : 0);
@@ -76,6 +77,5 @@ public class AdminClient {
             h.setSafe(Boolean.TRUE.equals(event.getIsSafe()));
             return h;
         }).collect(Collectors.toList());
-        return highlights;
     }
 }

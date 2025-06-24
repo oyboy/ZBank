@@ -38,7 +38,7 @@ public class AdminPageTest extends BaseTest {
         request.setLanguageTabs(configSettings.getData().getLanguageTabs());
         request.setSports(sportsFromApi);
 
-        String body = new ObjectMapper().writeValueAsString(request);
+        String body = objectMapper.writeValueAsString(request);
 
         Response updateConfigResponse = given()
                 .log().all()
