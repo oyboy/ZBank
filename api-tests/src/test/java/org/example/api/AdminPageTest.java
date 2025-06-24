@@ -11,6 +11,7 @@ import models.response.config_settings.Sport;
 import config.ConfigReader;
 import models.request.ChampionshipsRequest;
 import models.request.UpdateConfigRequest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -25,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminPageTest extends BaseTest {
     @Test
-    @Description("Проверка обновления конфигурации при удалении языковой вкладки")
+    @DisplayName("Проверка удаления языка")
+    @Description("Удаляет языковую вкладку из конфигурации при помощи POST-запроса UpdateConfig")
     @Story("Admin_Удаление языка")
     @TmsLink("TC_ADMIN_01")
     public void testRemoveLanguage() throws Exception {
@@ -57,7 +59,8 @@ public class AdminPageTest extends BaseTest {
 
 
     @Test
-    @Description("Проверка получения чемпионатов при корректной дате")
+    @DisplayName("Проверка получения чемпионатов при корректной дате")
+    @Description("Отправляет POST-запрос на /GetChampionships с валидным диапазоном дат и проверяет, что возвращаемое поле Success = true")
     @Story("Admin_Чемпионаты")
     @TmsLink("TC_ADMIN_02")
     public void getChampionshipsWithCorrectDate() {
@@ -89,7 +92,8 @@ public class AdminPageTest extends BaseTest {
     }
 
     @Test
-    @Description("Проверка ошибки при запросе чемпионатов с некорректной датой")
+    @DisplayName("Проверка ошибки при запросе чемпионатов с некорректной датой")
+    @Description("При передаче некорректных дат запрос возвращает ошибку")
     @Story("Admin_Чемпионаты")
     @TmsLink("TC_ADMIN_03")
     public void getChampionshipsWithIncorrectDate() {

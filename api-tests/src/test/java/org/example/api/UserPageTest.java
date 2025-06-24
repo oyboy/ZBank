@@ -7,6 +7,7 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import config.ConfigReader;
 import models.request.GenericRequest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.*;
@@ -48,7 +49,8 @@ public class UserPageTest extends BaseTest {
     }
 
     @Test
-    @Description("Проверка перевода элементов страницы")
+    @DisplayName("Проверка перевода элементов страницы")
+    @Description("Проверяет, что запрос возвращает корректные переводы статических элементов: Today, Stake, No bets found")
     @Story("Frontend_Переводы")
     @TmsLink("TC_USER_01")
     public void getLanguagesList() {
@@ -70,7 +72,8 @@ public class UserPageTest extends BaseTest {
     }
 
     @Test
-    @Description("Проверка, что кнопка 'View All Events' не отображается, если событий < 10")
+    @DisplayName("Скрытие кнопки 'View All Events'")
+    @Description("Кнопка 'View All Events' не отображается, если количество событий меньше 10")
     @Story("Frontend_Показ событий")
     @TmsLink("TC_USER_02")
     public void checkViewAllEventsButtonIsNotDisplayed() {
@@ -89,7 +92,8 @@ public class UserPageTest extends BaseTest {
     }
 
     @Test
-    @Description("Проверка, что кнопка 'View All Events' отображается, если событий >= 10")
+    @DisplayName("Отображение кнопки 'View All Events'")
+    @Description("Кнопка 'View All Events' отображается, если количество событий больше или равно 10")
     @Story("Frontend_Показ событий")
     @TmsLink("TC_USER_03")
     public void checkViewAllEventsButtonIsDisplayed() {
@@ -108,7 +112,8 @@ public class UserPageTest extends BaseTest {
     }
 
     @Test
-    @Description("Проверка, что метод GetHighlights возвращает список событий")
+    @DisplayName("Получение хайлайтов")
+    @Description("Метод GetHighlights при вызове возвращает непустой список событий")
     @Story("Frontend_Хайлайты")
     @TmsLink("TC_USER_04")
     public void callingGetHighlightsReturnsNonEmptyEventList() {
@@ -126,7 +131,8 @@ public class UserPageTest extends BaseTest {
     }
 
     @Test
-    @Description("Проверка получения избранных чемпионатов при корректной дате")
+    @DisplayName("Получение избранных чемпионатов")
+    @Description("При корректном диапазоне дат метод возвращает непустой список избранных чемпионатов")
     @Story("Frontend_Избранные чемпионаты")
     @TmsLink("TC_USER_05")
     public void getFavouriteChampsWithCorrectDate() {
@@ -147,7 +153,8 @@ public class UserPageTest extends BaseTest {
     }
 
     @Test
-    @Description("Проверка, что при некорректной дате избранные чемпионаты не возвращаются")
+    @DisplayName("Запрос избранных чемпионатов с некорректной датой")
+    @Description("Проверяет, что при передаче даты из прошлого возвращается ошибка 400 и пустой список чемпионатов")
     @Story("Frontend_Избранные чемпионаты")
     @TmsLink("TC_USER_06")
     public void getFavouriteChampsWithUncorrectDate() {
