@@ -55,6 +55,7 @@ public class AdminClient {
                 .body(objectMapper.convertValue(request, Map.class))
                 .post("/Api/HighlightsManager/GetChampionships")
                 .then()
+                .log().all()
                 .extract()
                 .response()
                 .as(ChampionshipResponse.class);
@@ -87,7 +88,6 @@ public class AdminClient {
         h.setSafe(Boolean.TRUE.equals(event.getIsSafe()));
         return h;
     }
-
 
     public static UpdateConfigResponse updateConfig(UpdateConfigRequest request, Map<String, String> cookie){
         return given()

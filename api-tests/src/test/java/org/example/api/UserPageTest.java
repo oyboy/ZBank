@@ -16,27 +16,13 @@ import java.time.*;
 import java.util.List;
 import java.util.Map;
 
+import static models.requests.GenericRequestBuilderProvider.baseRequestBuilder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserPageTest extends BaseTest {
-    private GenericRequest.GenericRequestBuilder baseRequestBuilder() {
-        return GenericRequest.builder()
-                .timezoneOffset(420)
-                .langId(39)
-                .skinName("betsonic")
-                .configId(1)
-                .culture("fr-fr")
-                .countryCode("RU")
-                .deviceType("Desktop")
-                .numformat("en")
-                .integration("skintest")
-                .showAllEvents(false)
-                .count(10)
-                .hasStreaming(false);
-    }
     @Test
     @DisplayName("Проверка перевода элементов страницы")
     @Description("Проверяет, что запрос возвращает корректные переводы статических элементов: Today, Stake, No bets found")
@@ -115,7 +101,6 @@ public class UserPageTest extends BaseTest {
     public void getFavouriteChampsWithCorrectDate() {
         Instant startDate = Instant.now();
         Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).plusMonths(1).toInstant();
-
         GenericRequest request = baseRequestBuilder()
                 .period("periodmonth")
                 .startDate(startDate)

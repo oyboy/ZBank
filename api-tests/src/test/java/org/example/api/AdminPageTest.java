@@ -17,7 +17,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
 
-import static clients.AdminClient.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminPageTest extends BaseTest {
@@ -26,13 +25,13 @@ public class AdminPageTest extends BaseTest {
     @Description("Удаляет языковую вкладку из конфигурации при помощи POST-запроса UpdateConfig")
     @Story("Admin_Удаление языка")
     @TmsLink("TC_ADMIN_01")
-    public void testRemoveLanguage() throws Exception {
-        ConfigSettingsResponse configSettings = getConfigSettings(cookie);
-        List<Sport> sportsFromApi = getPreparedSports(cookie);
+    public void testRemoveLanguage() {
+        ConfigSettingsResponse configSettings = AdminClient.getConfigSettings(cookie);
+        List<Sport> sportsFromApi = AdminClient.getPreparedSports(cookie);
 
         UpdateConfigRequest request = new UpdateConfigRequest();
         request.setConfigId(126);
-        request.setHighlightsEvents(getHighlightEvents(cookie));
+        request.setHighlightsEvents(AdminClient.getHighlightEvents(cookie));
         request.setLanguageTabs(configSettings.getData().getLanguageTabs());
         request.setSports(sportsFromApi);
 
@@ -55,7 +54,7 @@ public class AdminPageTest extends BaseTest {
                 .dateTo(endDate)
                 .build();
 
-        ChampionshipResponse response = getChampionships(request, cookie);
+        ChampionshipResponse response = AdminClient.getChampionships(request, cookie);
         assertTrue(response.getSuccess(), "Запрос должен вернуть список событий при корректном диапазоне дат");
     }
 
@@ -73,7 +72,7 @@ public class AdminPageTest extends BaseTest {
                 .dateTo(endDate)
                 .build();
 
-        ChampionshipResponse response = getChampionships(request, cookie);
+        ChampionshipResponse response = AdminClient.getChampionships(request, cookie);
         assertFalse(response.getSuccess(), "Запрос должен вернуть ошибку при некорректном диапазоне дат");
     }
 }
