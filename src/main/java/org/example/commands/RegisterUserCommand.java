@@ -27,7 +27,7 @@ public class RegisterUserCommand implements Runnable {
     public void run() {
         try{
             registrationService.register(username, email, password, confirmPassword);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             System.err.println("Cannot register user: " + e.getMessage());
         }
     }
