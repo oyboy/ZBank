@@ -1,14 +1,9 @@
-package models.requests;
+package clients;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.time.Instant;
+import lombok.*;
+import org.joda.time.DateTime;
 
 @Getter
 @Setter
@@ -60,8 +55,8 @@ public class GenericRequest {
     private String period;
 
     @JsonProperty("startDate")
-    private Instant startDate;
+    private DateTime startDate;
 
     @JsonProperty("endDate")
-    private Instant endDate;
+    private DateTime endDate;
 }

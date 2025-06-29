@@ -4,18 +4,11 @@ import clients.AdminClient;
 import io.qameta.allure.Description;
 import io.qameta.allure.Story;
 import io.qameta.allure.TmsLink;
-import models.responses.ChampionshipResponse;
-import models.responses.ConfigSettingsResponse;
-import models.entities.Sport;
-import models.requests.ChampionshipsRequest;
-import models.requests.UpdateConfigRequest;
-import models.responses.UpdateConfigResponse;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.util.List;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,16 +19,16 @@ public class AdminPageTest extends BaseTest {
     @Story("Admin_Удаление языка")
     @TmsLink("TC_ADMIN_01")
     public void testRemoveLanguage() {
-        ConfigSettingsResponse configSettings = AdminClient.getConfigSettings(cookie);
-        List<Sport> sportsFromApi = AdminClient.getPreparedSports(cookie);
+        String languageToRemove = "French";
+        com.altenar.sb2.admin.model.HighlightsConfigSettingsApiResult configSettings = AdminClient.getConfigSettings(cookie);
 
-        UpdateConfigRequest request = new UpdateConfigRequest();
+        com.altenar.sb2.admin.model.UpdateHighlightsConfigRequest request = new com.altenar.sb2.admin.model.UpdateHighlightsConfigRequest();
         request.setConfigId(126);
         request.setHighlightsEvents(AdminClient.getHighlightEvents(cookie));
-        request.setLanguageTabs(configSettings.getData().getLanguageTabs());
-        request.setSports(sportsFromApi);
+        request.setLanguageTabs(AdminClient.removeLanguageByName(configSettings.getData().getLanguageTabs(), languageToRemove));
+        request.setSports(AdminClient.getSportsRequestItem(configSettings.getData().getSports()));
 
-        UpdateConfigResponse updateConfigResponse = AdminClient.updateConfig(request, cookie);
+        com.altenar.sb2.admin.model.ApiResult updateConfigResponse = AdminClient.updateConfig(request, cookie);
         assertTrue(updateConfigResponse.getSuccess(), "Конфигурация должна быть успешно обновлена");
     }
 
@@ -46,15 +39,15 @@ public class AdminPageTest extends BaseTest {
     @Story("Admin_Чемпионаты")
     @TmsLink("TC_ADMIN_02")
     public void getChampionshipsWithCorrectDate() {
-        Instant startDate = Instant.now();
-        Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).plusDays(1).toInstant();
-        ChampionshipsRequest request = ChampionshipsRequest.builder()
-                .sportIds(new int[]{74, 76})
-                .dateFrom(startDate)
-                .dateTo(endDate)
-                .build();
+        DateTime startDate = DateTime.now();
+        DateTime endDate = DateTime.now().plusDays(1);
 
-        ChampionshipResponse response = AdminClient.getChampionships(request, cookie);
+        var request = new com.altenar.sb2.admin.model.GetHighlightsChampionshipsRequest();
+        request.setSportIds(Arrays.asList(74, 76));
+        request.setDateFrom(startDate);
+        request.setDateTo(endDate);
+
+        var response = AdminClient.getChampionships(request, cookie);
         assertTrue(response.getSuccess(), "Запрос должен вернуть список событий при корректном диапазоне дат");
     }
 
@@ -64,15 +57,15 @@ public class AdminPageTest extends BaseTest {
     @Story("Admin_Чемпионаты")
     @TmsLink("TC_ADMIN_03")
     public void getChampionshipsWithIncorrectDate() {
-        Instant startDate = Instant.now();
-        Instant endDate = Instant.now().atZone(ZoneId.systemDefault()).minusDays(1).toInstant();
-        ChampionshipsRequest request = ChampionshipsRequest.builder()
-                .sportIds(new int[]{74, 76})
-                .dateFrom(startDate)
-                .dateTo(endDate)
-                .build();
+        DateTime startDate = DateTime.now();
+        DateTime endDate = DateTime.now().minusDays(1);
 
-        ChampionshipResponse response = AdminClient.getChampionships(request, cookie);
+        var request = new com.altenar.sb2.admin.model.GetHighlightsChampionshipsRequest();
+        request.setSportIds(Arrays.asList(74, 76));
+        request.setDateFrom(startDate);
+        request.setDateTo(endDate);
+
+        var response = AdminClient.getChampionships(request, cookie);
         assertFalse(response.getSuccess(), "Запрос должен вернуть ошибку при некорректном диапазоне дат");
     }
 }
