@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminPageTest extends BaseTest {
     @Test
-    @DisplayName("Проверка удаления языка")
-    @Description("Удаляет языковую вкладку из конфигурации при помощи POST-запроса UpdateConfig")
-    @Story("Admin_Удаление языка")
+    @DisplayName("Check language removal")
+    @Description("Removes the language tab from the configuration using the UpdateConfig POST request")
+    @Story("Admin_Language Removal")
     @TmsLink("TC_ADMIN_01")
     public void testRemoveLanguage() {
         String languageToRemove = "French";
@@ -29,14 +29,13 @@ public class AdminPageTest extends BaseTest {
         request.setSports(AdminClient.getSportsRequestItem(configSettings.getData().getSports()));
 
         com.altenar.sb2.admin.model.ApiResult updateConfigResponse = AdminClient.updateConfig(request, cookie);
-        assertTrue(updateConfigResponse.getSuccess(), "Конфигурация должна быть успешно обновлена");
+        assertTrue(updateConfigResponse.getSuccess(), "Configuration should be updated successfully");
     }
 
-
     @Test
-    @DisplayName("Проверка получения чемпионатов при корректной дате")
-    @Description("Отправляет POST-запрос на /GetChampionships с валидным диапазоном дат и проверяет, что возвращаемое поле Success = true")
-    @Story("Admin_Чемпионаты")
+    @DisplayName("Check championships retrieval with correct date")
+    @Description("Sends a POST request to /GetChampionships with a valid date range and checks that the Success field returned is true")
+    @Story("Admin_Championships")
     @TmsLink("TC_ADMIN_02")
     public void getChampionshipsWithCorrectDate() {
         DateTime startDate = DateTime.now();
@@ -48,13 +47,13 @@ public class AdminPageTest extends BaseTest {
         request.setDateTo(endDate);
 
         var response = AdminClient.getChampionships(request, cookie);
-        assertTrue(response.getSuccess(), "Запрос должен вернуть список событий при корректном диапазоне дат");
+        assertTrue(response.getSuccess(), "Request should return a list of events with a valid date range");
     }
 
     @Test
-    @DisplayName("Проверка ошибки при запросе чемпионатов с некорректной датой")
-    @Description("При передаче некорректных дат запрос возвращает ошибку")
-    @Story("Admin_Чемпионаты")
+    @DisplayName("Check error when requesting championships with an incorrect date")
+    @Description("When passing incorrect dates, the request returns an error")
+    @Story("Admin_Championships")
     @TmsLink("TC_ADMIN_03")
     public void getChampionshipsWithIncorrectDate() {
         DateTime startDate = DateTime.now();
@@ -66,6 +65,6 @@ public class AdminPageTest extends BaseTest {
         request.setDateTo(endDate);
 
         var response = AdminClient.getChampionships(request, cookie);
-        assertFalse(response.getSuccess(), "Запрос должен вернуть ошибку при некорректном диапазоне дат");
+        assertFalse(response.getSuccess(), "Request should return an error for an invalid date range");
     }
 }

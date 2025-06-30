@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserPageTest extends BaseTest {
     @Test
-    @DisplayName("Проверка перевода элементов страницы")
-    @Description("Проверяет, что запрос возвращает корректные переводы статических элементов: Today, Stake, No bets found")
-    @Story("Frontend_Переводы")
+    @DisplayName("Check translation of page elements")
+    @Description("Checks that the request returns correct translations for static elements: Today, Stake, No bets found")
+    @Story("Frontend_Translations")
     @TmsLink("TC_USER_01")
     public void getLanguagesList() {
         GenericRequest request = GenericRequest.builder()
@@ -46,9 +46,9 @@ public class UserPageTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Скрытие кнопки 'View All Events'")
-    @Description("Кнопка 'View All Events' не отображается, если количество событий меньше 10")
-    @Story("Frontend_Показ событий")
+    @DisplayName("Hide 'View All Events' button")
+    @Description("The 'View All Events' button is not displayed if the number of events is less than 10")
+    @Story("Frontend_Show Events")
     @TmsLink("TC_USER_02")
     public void checkViewAllEventsButtonIsNotDisplayed() {
         GenericRequest request = GenericRequest.builder()
@@ -69,14 +69,14 @@ public class UserPageTest extends BaseTest {
 
         var response = UserClient.getUpcoming(request);
 
-        assertThat("Количество событий должно быть меньше 10", response.getResult().getEventsCount(), lessThan(10));
-        assertFalse(response.getResult().getShowMoreEvents(), "Кнопка показа всех событий не должна отображаться");
+        assertThat("Number of events should be less than 10", response.getResult().getEventsCount(), lessThan(10));
+        assertFalse(response.getResult().getShowMoreEvents(), "The 'View All Events' button should not be displayed");
     }
 
     @Test
-    @DisplayName("Отображение кнопки 'View All Events'")
-    @Description("Кнопка 'View All Events' отображается, если количество событий больше или равно 10")
-    @Story("Frontend_Показ событий")
+    @DisplayName("Display 'View All Events' button")
+    @Description("The 'View All Events' button is displayed if the number of events is greater than or equal to 10")
+    @Story("Frontend_Show Events")
     @TmsLink("TC_USER_03")
     public void checkViewAllEventsButtonIsDisplayed() {
         GenericRequest request = GenericRequest.builder()
@@ -97,14 +97,14 @@ public class UserPageTest extends BaseTest {
 
         var response = UserClient.getUpcoming(request);
 
-        assertThat("Количество событий должно быть больше или равно 10", response.getResult().getEventsCount(), greaterThanOrEqualTo(10));
-        assertTrue(response.getResult().getShowMoreEvents(), "Кнопка показа всех событий должна отображаться");
+        assertThat("Number of events should be greater than or equal to 10", response.getResult().getEventsCount(), greaterThanOrEqualTo(10));
+        assertTrue(response.getResult().getShowMoreEvents(), "The 'View All Events' button should be displayed");
     }
 
     @Test
-    @DisplayName("Получение хайлайтов")
-    @Description("Метод GetHighlights при вызове возвращает непустой список событий")
-    @Story("Frontend_Хайлайты")
+    @DisplayName("Retrieve highlights")
+    @Description("The GetHighlights method returns a non-empty list of events when called")
+    @Story("Frontend_Highlights")
     @TmsLink("TC_USER_04")
     public void callingGetHighlightsReturnsNonEmptyEventList() {
         GenericRequest request = GenericRequest.builder()
@@ -123,13 +123,13 @@ public class UserPageTest extends BaseTest {
                 .build();
 
         var response = UserClient.getHighlights(request);
-        assertThat("Количество хайлайтов должно быть больше 0", response.getResult().getEventsCount(), greaterThanOrEqualTo(1));
+        assertThat("Number of highlights should be greater than 0", response.getResult().getEventsCount(), greaterThanOrEqualTo(1));
     }
 
     @Test
-    @DisplayName("Получение избранных чемпионатов")
-    @Description("При корректном диапазоне дат метод возвращает непустой список избранных чемпионатов")
-    @Story("Frontend_Избранные чемпионаты")
+    @DisplayName("Retrieve favourite championships")
+    @Description("When the date range is correct, the method returns a non-empty list of favourite championships")
+    @Story("Frontend_Favourite Championships")
     @TmsLink("TC_USER_05")
     public void getFavouriteChampsWithCorrectDate() {
         DateTime startDate = DateTime.now();
@@ -151,13 +151,13 @@ public class UserPageTest extends BaseTest {
                 .build();
 
         var response = UserClient.getFavouritesChamps(request);
-        assertFalse(response.getResult().isEmpty(), "Список событий не должен пуст при корректной дате");
+        assertFalse(response.getResult().isEmpty(), "Event list should not be empty with valid dates");
     }
 
     @Test
-    @DisplayName("Запрос избранных чемпионатов с некорректной датой")
-    @Description("Проверяет, что при передаче даты из прошлого возвращается ошибка 400 и пустой список чемпионатов")
-    @Story("Frontend_Избранные чемпионаты")
+    @DisplayName("Request favourite championships with incorrect date")
+    @Description("Checks that when a past date is provided, an error 400 is returned and the list of championships is empty")
+    @Story("Frontend_Favourite Championships")
     @TmsLink("TC_USER_06")
     public void getFavouriteChampsWithUncorrectDate() {
         DateTime startDate = DateTime.now();
@@ -179,6 +179,6 @@ public class UserPageTest extends BaseTest {
                 .build();
 
         var response = UserClient.getFavouritesChamps(request);
-        assertTrue(response.getResult().isEmpty(), "Список событий должен быть пуст при некорректной дате");
+        assertTrue(response.getResult().isEmpty(), "The event list should be empty with incorrect dates");
     }
 }

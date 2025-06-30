@@ -6,7 +6,6 @@ import config.ObjectMapperFactory;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.util.Map;
-
 public abstract class BaseTest {
     protected static ObjectMapper objectMapper;
     protected static Map<String, String> cookie;
