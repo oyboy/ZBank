@@ -146,8 +146,8 @@ password = <валидный пароль>
 Для создания этого отчёта нужно: 
 1. Также перейти в модуль *api-tests*
 2. Запустить тесты (если до этого не были запущены)
-3. Выполнить ` ./gradlew swaggerCoverageAdmin` либо ` ./gradlew swaggerCoverageFront`.
-4. 
+3. Добавить в ресурсы тестов папку *swagger*, в неё добавить документацю *swagger-admin.json* и *swagger-front.json*
+4. Выполнить ` ./gradlew swaggerCoverageAdmin` либо ` ./gradlew swaggerCoverageFront`.
 В результате в корневой папке модуля создастся *swagger-coverage-report.html*
 
 ![image](https://github.com/user-attachments/assets/11c1845c-1880-48b0-8b1e-5d0fd54095f8)
