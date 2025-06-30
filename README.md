@@ -133,7 +133,22 @@ password = <валидный пароль>
 ## Swagger
 Для запуска тестов создаётся тот же **conf.properties**, что и в api-тестах. 
 
-Allure-отчёт:
+#### Allure-отчёт:
+Для создания отчёта нужно:
+1. Перейти в модуль *api-tests*
+2. Запустить тесты
+3. Выполнить команды `./gradlew allureReport` и `./gradlew allureServe`
+4. Если сервер поднимается по недоступному ip, то нужно дополнительно перейти в папку *build* и из cmd выполнить `allure serve`
+
 ![image](https://github.com/user-attachments/assets/e253eea3-536e-4eef-a8d6-68f2663749c8)
 
-Отчёт о покрытии:
+#### Отчёт о покрытии:
+Для создания этого отчёта нужно: 
+1. Также перейти в модуль *api-tests*
+2. Запустить тесты (если до этого не были запущены)
+3. Выполнить ` ./gradlew swaggerCoverageAdmin` либо ` ./gradlew swaggerCoverageFront`.
+4. 
+В результате в корневой папке модуля создастся *swagger-coverage-report.html*
+
+![image](https://github.com/user-attachments/assets/11c1845c-1880-48b0-8b1e-5d0fd54095f8)
+![image](https://github.com/user-attachments/assets/6d7b8133-74b3-46d7-9a67-ee5de6b9d2fc)
