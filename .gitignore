@@ -7,6 +7,8 @@ database
 allure-report
 allure-results
 api-tests/src/test/resources/conf.properties
+api-tests/swagger-coverage-*
+api-tests/src/test/resources/swagger
 ui-tests/src/test/resources/conf.properties
 ### IntelliJ IDEA ###
 .idea/modules.xml

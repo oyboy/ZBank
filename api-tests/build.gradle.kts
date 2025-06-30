@@ -1,15 +1,16 @@
+val allureVersion = "2.25.0"
+group = "org.example"
+version = "1.0-SNAPSHOT"
+
 plugins {
     java
     id("org.openapi.generator") version "7.2.0"
     id("io.qameta.allure") version "2.11.2"
 }
 
-val allureVersion = "2.25.0"
-group = "org.example"
-version = "1.0-SNAPSHOT"
-
 repositories {
     mavenCentral()
+    maven { url = uri("https://dl.bintray.com/viclovsky/maven") }
 }
 
 sourceSets {
@@ -28,6 +29,8 @@ dependencies {
     testImplementation(platform("io.qameta.allure:allure-bom:$allureVersion"))
     testImplementation("io.qameta.allure:allure-junit5")
 
+    implementation("com.github.viclovsky:swagger-coverage-rest-assured:1.4.5")
+
     implementation("io.rest-assured:rest-assured:5.5.5")
     implementation("org.projectlombok:lombok:1.18.36")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.15.3")
@@ -41,12 +44,15 @@ dependencies {
     implementation(group = "com.google.code.gson", name = "gson", version = "2.7")
     implementation("joda-time:joda-time:2.12.1")
 
+
     testCompileOnly("org.projectlombok:lombok:1.18.36")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
+
 }
 
 tasks.test {
     useJUnitPlatform()
+
 }
 
 val openApiGenerateFront by tasks.registering(org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
@@ -101,6 +107,30 @@ val openApiGenerateAdmin by tasks.registering(org.openapitools.generator.gradle.
     generateModelDocumentation.set(false)
 
     globalProperties.set(mapOf("models" to ""))
+}
+
+tasks.register("swaggerCoverageAdmin") {
+    doLast {
+        exec {
+            workingDir = file("$projectDir")
+            commandLine("cmd", "/c", "swagger-coverage-commandline",
+                "-s", "src/test/resources/swagger/swagger-admin.json",
+                "-i", "swagger-coverage-output",
+                "-q")
+        }
+    }
+}
+
+tasks.register("swaggerCoverageFront") {
+    doLast {
+        exec {
+            workingDir = file("$projectDir")
+            commandLine("cmd", "/c", "swagger-coverage-commandline",
+                "-s", "src/test/resources/swagger/swagger-front.json",
+                "-i", "swagger-coverage-output",
+                "-q")
+        }
+    }
 }
 
 val cleanBuildPublish by tasks.registering(GradleBuild::class) {
