@@ -1,4 +1,4 @@
-package com.example.springtests.configuration;
+package com.example.springtests.kafka;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
