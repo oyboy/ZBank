@@ -140,4 +140,13 @@ public class ExpectedResultGenerator {
                 .setScale(scale, RoundingMode.HALF_UP)
                 .doubleValue();
     }
+
+    public static Map<String, Object> generateExpectedErrorMessage(String eventId) {
+        Map<String, Object> errorMessage = new LinkedHashMap<>();
+        errorMessage.put("id", -922337203685477580L);
+        errorMessage.put("is_success", false);
+        errorMessage.put("error_description", "Deserialization error. Received message with wrong format.");
+
+        return errorMessage;
+    }
 }

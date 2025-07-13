@@ -132,4 +132,8 @@ public class CreateEvents {
             throw new RuntimeException("JSON serialization error", e);
         }
     }
+
+    public static String createInvalidJson() {
+        return "{\"id\": 123456789, \"markets\": [";
+    }
 }

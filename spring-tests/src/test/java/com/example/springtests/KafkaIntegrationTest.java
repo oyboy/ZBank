@@ -102,4 +102,22 @@ public class KafkaIntegrationTest {
 
         assertThatJson(last.value()).isEqualTo(expectedKafkaMessageJson);
     }
+
+
+    @Test
+    void shouldSendErrorMessageWhenInvalidJsonReceived() throws Exception {
+        String invalidJson = CreateEvents.createInvalidJson();
+        kafkaService.sendMessage(INPUT_TOPIC, TEST_EVENT_ID, invalidJson);
+
+        kafkaService.awaitMarketDataInserted(TEST_EVENT_ID, 0, TIMEOUT);
+
+        List<ConsumerRecord<String, String>> records = kafkaService.pollMessages(OUTPUT_TOPIC, MAX_MESSAGES, TIMEOUT);
+        assertFalse(records.isEmpty(), "Не получено сообщение об ошибке");
+
+        ConsumerRecord<String, String> errorRecord = records.getLast();
+        //assertEquals(TEST_EVENT_ID, errorRecord.key(), "Ключ сообщения должен быть равен TEST_EVENT_ID");
+
+        Map<String, Object> expectedError = ExpectedResultGenerator.generateExpectedErrorMessage(TEST_EVENT_ID);
+        assertThatJson(errorRecord.value()).isEqualTo(expectedError);
+    }
 }
