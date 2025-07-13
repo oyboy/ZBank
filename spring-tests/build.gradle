@@ -29,13 +29,10 @@ dependencies {
     implementation 'org.apache.kafka:kafka-clients'
     implementation 'org.jdbi:jdbi3-core:3.33.0'
     implementation 'org.jdbi:jdbi3-spring5:3.33.0'
-    implementation 'org.postgresql:postgresql:42.3.5'
     implementation 'org.postgresql:postgresql'
     implementation 'org.awaitility:awaitility'
     implementation 'org.projectlombok:lombok:1.18.36'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.flywaydb:flyway-core'
-    implementation 'org.flywaydb:flyway-database-postgresql'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
@@ -44,10 +41,6 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
-    testImplementation 'org.testcontainers:testcontainers'
-    testImplementation 'org.testcontainers:postgresql'
-    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-    testImplementation 'org.testcontainers:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
