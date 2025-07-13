@@ -61,4 +61,19 @@ public class KafkaService {
         producer.close();
         consumer.close();
     }
+
+    public void clearTopic(String topic) {
+        consumer.subscribe(Collections.singleton(topic));
+        boolean moreMessages = true;
+        while (moreMessages) {
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(300));
+            if (records.isEmpty()) {
+                moreMessages = false;
+            } else {
+                for (ConsumerRecord<String, String> ignored : records) {}
+                consumer.commitSync();
+            }
+        }
+        consumer.unsubscribe();
+    }
 }

@@ -2,9 +2,10 @@ package com.example.springtests;
 
 import com.example.springtests.components.CreateEvents;
 import com.example.springtests.components.ExpectedResultGenerator;
+import com.example.springtests.extensions.DatabaseCleanerExtension;
+import com.example.springtests.extensions.KafkaTopicCleanerExtension;
 import com.example.springtests.kafka.KafkaService;
 import com.example.springtests.models.MarketDataRecord;
-import com.example.springtests.repositories.MarketRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
@@ -12,6 +13,7 @@ import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -20,6 +22,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith({KafkaTopicCleanerExtension.class, DatabaseCleanerExtension.class})
 public class KafkaIntegrationTest {
     private static final String INPUT_TOPIC = "markets";
     private static final String OUTPUT_TOPIC = "processed_markets";
@@ -35,13 +38,6 @@ public class KafkaIntegrationTest {
     @BeforeEach
     public void setUp() {
         kafkaService = new KafkaService();
-        MarketRepository marketRepository = new MarketRepository();
-
-        try {
-            marketRepository.clearMarketData();
-        } catch (Exception e) {
-            fail("Ошибка при очистке БД", e);
-        }
     }
 
     @AfterEach
