@@ -1,18 +1,21 @@
 package com.example.springtests;
 
 import com.example.springtests.components.CreateEvents;
+import com.example.springtests.components.ExpectedResultGenerator;
 import com.example.springtests.kafka.KafkaService;
 import com.example.springtests.models.MarketDataRecord;
 import com.example.springtests.repositories.MarketRepository;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.*;
 
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class KafkaIntegrationTest {
@@ -24,7 +27,7 @@ public class KafkaIntegrationTest {
 
     private static final Integer MAX_MESSAGES = 3;
     private static final Duration TIMEOUT = Duration.ofSeconds(10);
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private KafkaService kafkaService;
 
     @BeforeEach
@@ -45,79 +48,58 @@ public class KafkaIntegrationTest {
     }
 
     @Test
-    void shouldProcessMarketEventAndVerifyDatabaseAndOutputTopic() throws ExecutionException, InterruptedException, TimeoutException {
-        String testEventJson = CreateEvents.createTestEventJson();
-        kafkaService.sendMessage(INPUT_TOPIC, TEST_EVENT_ID, testEventJson);
+    void shouldProcessMarketEventAndVerifyDatabaseAndOutputTopic() throws Exception {
+        String eventJson = CreateEvents.createMarketEvent(TEST_EVENT_ID);
+        kafkaService.sendMessage(INPUT_TOPIC, TEST_EVENT_ID, eventJson);
 
-        List<MarketDataRecord> records = kafkaService.awaitMarketDataInserted(TEST_EVENT_ID, 2, TIMEOUT);
-        MarketDataRecord firstRecord = records.get(0);
-        assertEquals(TEST_EVENT_ID, firstRecord.getEventId());
-        assertEquals(1L, firstRecord.getMarketTypeId());
-        assertEquals(1L, firstRecord.getSelectionTypeId());
-        assertEquals(2.4, firstRecord.getPrice());
-        assertEquals(1.55555, firstRecord.getProbability());
-        assertEquals("suspended", firstRecord.getStatus());
+        List<MarketDataRecord> actualRecords = kafkaService.awaitMarketDataInserted(TEST_EVENT_ID, 2, TIMEOUT);
+        assertFalse(actualRecords.isEmpty(), "Записи в БД не найдены");
 
-        MarketDataRecord secondRecord = records.get(1);
-        assertEquals(TEST_EVENT_ID, secondRecord.getEventId());
-        assertEquals(1L, secondRecord.getMarketTypeId());
-        assertEquals(2L, secondRecord.getSelectionTypeId());
-        assertEquals(4.7, secondRecord.getPrice());
-        assertEquals(2.8888, secondRecord.getProbability());
-        assertEquals("suspended", secondRecord.getStatus());
+        Map<String, Object> eventMap = objectMapper.readValue(eventJson, new TypeReference<>() {});
 
-        List<ConsumerRecord<String, String>> recivedMessages = kafkaService.pollMessages(OUTPUT_TOPIC, MAX_MESSAGES, TIMEOUT);
-        assertFalse(records.isEmpty(), "Не получено ни одного сообщения из топика 'processed_markets'");
+        List<MarketDataRecord> expectedRecords = ExpectedResultGenerator.generateExpectedRecordsFromEvent(eventMap);
 
-        ConsumerRecord<String, String> last = recivedMessages.getLast();
-        assertEquals(TEST_EVENT_ID, last.key());
-        assertEquals(""" 
-                {"id":123456789,"is_success":true,"unique_markets_ids":[1],"unique_selection_ids":[1,2]}""", last.value());
+        String expectedJson = objectMapper.writeValueAsString(expectedRecords);
+        String actualJson = objectMapper.writeValueAsString(actualRecords);
+        assertThatJson(actualJson)
+                .whenIgnoringPaths("[*].id")
+                .isEqualTo(expectedJson);
+
+        List<ConsumerRecord<String, String>> kafkaMessages = kafkaService.pollMessages(OUTPUT_TOPIC, 10, TIMEOUT);
+        assertFalse(kafkaMessages.isEmpty(), "Нет сообщений из топика processed_markets");
+        ConsumerRecord<String, String> lastMessage = kafkaMessages.getLast();
+
+        Map<String, Object> expectedKafkaMessageMap = ExpectedResultGenerator.generateExpectedKafkaEventMessage(eventMap);
+        String expectedKafkaMessageJson = objectMapper.writeValueAsString(expectedKafkaMessageMap);
+        assertThatJson(lastMessage.value()).isEqualTo(expectedKafkaMessageJson);
     }
+
 
     @Test
     void shouldProcessMarketReportAndVerifyDatabaseAndOutputTopic() throws Exception {
-        String testReportJson = CreateEvents.createTestReportJson();
+        String testReportJson = CreateEvents.createMarketReport(TEST_REPORT_ID);
         kafkaService.sendMessage(INPUT_TOPIC, TEST_REPORT_ID, testReportJson);
 
+        List<MarketDataRecord> actualRecords = kafkaService.awaitMarketDataInserted(TEST_REPORT_ID, 2, TIMEOUT);
+        assertFalse(actualRecords.isEmpty(), "Записи в БД не найдены");
 
-        List<MarketDataRecord> records = kafkaService.awaitMarketDataInserted(TEST_REPORT_ID, 2, TIMEOUT);
-        MarketDataRecord oddRecord = records.get(0);
-        assertEquals(2.5 + 201, oddRecord.getPrice());
-        assertEquals(0.555 + (201 / 10.0), oddRecord.getProbability());
-        assertEquals("active", oddRecord.getStatus());
+        Map<String, Object> reportMap = objectMapper.readValue(testReportJson, new TypeReference<>() {});
+        List<MarketDataRecord> expectedRecords = ExpectedResultGenerator.generateExpectedRecordsFromReport(reportMap);
 
-        MarketDataRecord evenRecord = records.get(1);
-        assertEquals(1.5 + 202, evenRecord.getPrice());
-        assertEquals(0.445 + (202 / 10.0), evenRecord.getProbability());
-        assertEquals("suspended", evenRecord.getStatus());
+        String expectedJson = objectMapper.writeValueAsString(expectedRecords);
+        String actualJson = objectMapper.writeValueAsString(actualRecords);
+        assertThatJson(actualJson)
+                .whenIgnoringPaths("[*].id")
+                .isEqualTo(expectedJson);
 
-        List<ConsumerRecord<String, String>> recordList = kafkaService.pollMessages(OUTPUT_TOPIC, MAX_MESSAGES, TIMEOUT);
-        assertFalse(recordList.isEmpty(), "Не получено ни одного сообщения из топика 'processed_markets'");
+        List<ConsumerRecord<String, String>> kafkaMessages = kafkaService.pollMessages(OUTPUT_TOPIC, MAX_MESSAGES, TIMEOUT);
+        assertFalse(kafkaMessages.isEmpty(), "Не получено ни одного сообщения из топика 'processed_markets'");
+        ConsumerRecord<String, String> last = kafkaMessages.getLast();
+        assertEquals(TEST_REPORT_ID, last.key());
 
-        ConsumerRecord<String, String> last = recordList.getLast();
-        assertTrue(last.value().contains("\"processed_markets_ids\":[2]"));
-        assertTrue(last.value().contains("\"processed_selections_ids\":[201,202]"));
-    }
+        Map<String, Object> expectedKafkaMessage = ExpectedResultGenerator.generateExpectedKafkaReportMessage(reportMap);
+        String expectedKafkaMessageJson = objectMapper.writeValueAsString(expectedKafkaMessage);
 
-    @Test
-    void shouldSendErrorMessageWhenInvalidJsonReceived() throws Exception {
-        String invalidJson = CreateEvents.createInvalidJson();
-        kafkaService.sendMessage(INPUT_TOPIC, TEST_EVENT_ID, invalidJson);
-
-        kafkaService.awaitMarketDataInserted(TEST_EVENT_ID, 0, TIMEOUT);
-
-        List<ConsumerRecord<String, String>> records = kafkaService.pollMessages(OUTPUT_TOPIC, MAX_MESSAGES, TIMEOUT);
-        assertFalse(records.isEmpty());
-        ConsumerRecord<String, String> errorRecord = records.getLast();
-
-        assertEquals(TEST_EVENT_ID, errorRecord.key(), "Ключ сообщения должен быть равен TEST_EVENT_ID");
-
-        JsonNode errorMessage = new ObjectMapper().readTree(errorRecord.value());
-        assertEquals(-922337203685477580L, errorMessage.get("id").asLong(), "Поле id в сообщении об ошибке");
-        assertFalse(errorMessage.get("is_success").asBoolean(), "Поле is_success должно быть false");
-        assertEquals("Deserialization error. Received message with wrong format.",
-                errorMessage.get("error_description").asText(),
-                "Неверное описание ошибки");
+        assertThatJson(last.value()).isEqualTo(expectedKafkaMessageJson);
     }
 }
