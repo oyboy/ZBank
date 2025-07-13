@@ -13,10 +13,19 @@ import java.util.stream.Collectors;
 public class CreateEvents {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final Random random = new Random();
-    private static final String[] STATUSES = {
-            "active", "suspended", "disabled", "win", "loss",
-            "return", "half_win", "half_loss", "cancelled"
-    };
+    private static final Map<String, Integer> STATUS_NAME_TO_CODE = Map.of(
+            "active", 0,
+            "suspended", 1,
+            "disabled", 2,
+            "win", 3,
+            "loss", 4,
+            "return", 5,
+            "half_win", 6,
+            "half_loss", 7,
+            "cancelled", 8
+    );
+    private static final List<String> STATUS_NAMES = new ArrayList<>(STATUS_NAME_TO_CODE.keySet());
+
 
     private static final List<MarketTemplate> MARKET_TEMPLATES = List.of(
             new MarketTemplate("Match winner", 2001, List.of(101, 102)),
@@ -24,11 +33,16 @@ public class CreateEvents {
             new MarketTemplate("First goal", 2003, List.of(301, 302, 303))
     );
 
-    public static String createMarketEvent(String eventId) {
+    public static String createMarketEvent(String reportId) {
+        return createMarketEventWithStatus(reportId, null, false);
+    }
+
+    public static String createMarketEventWithStatus(String eventId, String status, Boolean isFinal) {
         Map<String, Object> event = new LinkedHashMap<>();
         event.put("id", eventId);
         event.put("message_type", "market_event");
-        event.put("status", randomStatus());
+        if (status != null) event.put("status", status);
+        else event.put("status", randomStatus());
 
         List<Map<String, Object>> markets = MARKET_TEMPLATES.stream()
                 .limit(1)
@@ -43,11 +57,9 @@ public class CreateEvents {
                     List<Map<String, Object>> selections = marketDef.getSelectionIds().stream()
                             .map(selId -> {
                                 Map<String, Object> selection = new LinkedHashMap<>();
-                                int statusCode = random.nextInt(STATUSES.length);
                                 selection.put("selection_type_id", selId);
-                                selection.put("status", statusCode);
+                                selection.put("status", STATUS_NAME_TO_CODE.get(status));
 
-                                boolean isFinal = statusCode >= 2;
                                 if (!isFinal) {
                                     Map<String, Object> odds = new HashMap<>();
                                     odds.put("price", round(randomDouble(1.5, 10.5), 2));
@@ -70,10 +82,10 @@ public class CreateEvents {
     }
 
     public static String createMarketReport(String reportId) {
-        return createMarketReport(reportId, null);
+        return createMarketReportWithStatus(reportId, null);
     }
 
-    public static String createMarketReport(String eventId, String forcedStatus) {
+    public static String createMarketReportWithStatus(String eventId, String forcedStatus) {
         Map<String, Object> report = new LinkedHashMap<>();
         report.put("id", eventId);
         report.put("message_type", "market_report");
@@ -107,8 +119,10 @@ public class CreateEvents {
         return Math.round((min + (max - min) * ThreadLocalRandom.current().nextDouble()) * 100000.0) / 100000.0;
     }
 
+
     private static String randomStatus() {
-        return STATUSES[random.nextInt(STATUSES.length)];
+        int index = random.nextInt(STATUS_NAMES.size());
+        return STATUS_NAMES.get(index);
     }
 
     private static String randomString(int length) {

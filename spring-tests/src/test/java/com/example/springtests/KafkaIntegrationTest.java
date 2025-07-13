@@ -12,6 +12,8 @@ import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.Duration;
 import java.util.*;
@@ -47,9 +49,10 @@ public class KafkaIntegrationTest {
         kafkaService.close();
     }
 
-    @Test
-    void shouldProcessMarketEventAndVerifyDatabaseAndOutputTopic() throws Exception {
-        String eventJson = CreateEvents.createMarketEvent(TEST_EVENT_ID);
+    @ParameterizedTest(name = "Should process market_event with status={0}")
+    @MethodSource("com.example.springtests.StatusProvider#provideAllStatuses")
+    void shouldProcessMarketEventAndVerifyDatabaseAndOutputTopic(String status, boolean isFinalStatus) throws Exception {
+        String eventJson = CreateEvents.createMarketEventWithStatus(TEST_EVENT_ID, status, isFinalStatus);
         kafkaService.sendMessage(INPUT_TOPIC, TEST_EVENT_ID, eventJson);
 
         List<MarketDataRecord> actualRecords = kafkaService.awaitMarketDataInserted(TEST_EVENT_ID, 2, TIMEOUT);
@@ -75,9 +78,10 @@ public class KafkaIntegrationTest {
     }
 
 
-    @Test
-    void shouldProcessMarketReportAndVerifyDatabaseAndOutputTopic() throws Exception {
-        String testReportJson = CreateEvents.createMarketReport(TEST_REPORT_ID);
+    @ParameterizedTest(name = "Should process market_report with status={0}")
+    @MethodSource("com.example.springtests.StatusProvider#provideAllStatuses")
+    void shouldProcessMarketReportAndVerifyDatabaseAndOutputTopic(String status) throws Exception {
+        String testReportJson = CreateEvents.createMarketReportWithStatus(TEST_REPORT_ID, status);
         kafkaService.sendMessage(INPUT_TOPIC, TEST_REPORT_ID, testReportJson);
 
         List<MarketDataRecord> actualRecords = kafkaService.awaitMarketDataInserted(TEST_REPORT_ID, 2, TIMEOUT);
@@ -99,7 +103,6 @@ public class KafkaIntegrationTest {
 
         Map<String, Object> expectedKafkaMessage = ExpectedResultGenerator.generateExpectedKafkaReportMessage(reportMap);
         String expectedKafkaMessageJson = objectMapper.writeValueAsString(expectedKafkaMessage);
-
         assertThatJson(last.value()).isEqualTo(expectedKafkaMessageJson);
     }
 
@@ -115,8 +118,6 @@ public class KafkaIntegrationTest {
         assertFalse(records.isEmpty(), "Не получено сообщение об ошибке");
 
         ConsumerRecord<String, String> errorRecord = records.getLast();
-        //assertEquals(TEST_EVENT_ID, errorRecord.key(), "Ключ сообщения должен быть равен TEST_EVENT_ID");
-
         Map<String, Object> expectedError = ExpectedResultGenerator.generateExpectedErrorMessage(TEST_EVENT_ID);
         assertThatJson(errorRecord.value()).isEqualTo(expectedError);
     }
