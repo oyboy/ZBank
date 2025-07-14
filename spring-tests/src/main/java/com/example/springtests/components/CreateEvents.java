@@ -2,8 +2,12 @@ package com.example.springtests.components;
 
 import com.example.springtests.models.MarketTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -27,11 +31,17 @@ public class CreateEvents {
     private static final List<String> STATUS_NAMES = new ArrayList<>(STATUS_NAME_TO_CODE.keySet());
 
 
-    private static final List<MarketTemplate> MARKET_TEMPLATES = List.of(
-            new MarketTemplate("Match winner", 2001, List.of(101, 102)),
-            new MarketTemplate("Total goals", 2002, List.of(201, 202)),
-            new MarketTemplate("First goal", 2003, List.of(301, 302, 303))
-    );
+    private static final List<MarketTemplate> MARKET_TEMPLATES = loadMarketTemplates();
+    private static List<MarketTemplate> loadMarketTemplates() {
+        try (InputStream is = CreateEvents.class.getClassLoader().getResourceAsStream("markets.json")) {
+            if (is == null) {
+                throw new IllegalStateException("Не найден файл markets.json в resources");
+            }
+            return OBJECT_MAPPER.readValue(is, new TypeReference<List<MarketTemplate>>() {});
+        } catch (IOException e) {
+            throw new UncheckedIOException("Ошибка при загрузке market templates из markets.json", e);
+        }
+    }
 
     public static String createMarketEvent(String reportId) {
         return createMarketEventWithStatus(reportId, null, false);
@@ -48,13 +58,13 @@ public class CreateEvents {
                 .limit(1)
                 .map(marketDef -> {
                     Map<String, Object> market = new LinkedHashMap<>();
-                    market.put("market_type_id", marketDef.getMarketTypeId());
+                    market.put("market_type_id", marketDef.getMarket_type_id());
                     market.put("specifiers", List.of(Map.of(
                             "name", randomString(5),
                             "value", round(randomDouble(0.1, 10.0), 3)
                     )));
 
-                    List<Map<String, Object>> selections = marketDef.getSelectionIds().stream()
+                    List<Map<String, Object>> selections = marketDef.getSelections_ids().stream()
                             .map(selId -> {
                                 Map<String, Object> selection = new LinkedHashMap<>();
                                 selection.put("selection_type_id", selId);
@@ -94,9 +104,9 @@ public class CreateEvents {
                 .limit(1)
                 .map(marketDef -> {
                     Map<String, Object> market = new LinkedHashMap<>();
-                    market.put("market_type_id", marketDef.getMarketTypeId());
+                    market.put("market_type_id", marketDef.getMarket_type_id());
 
-                    List<Map<String, Object>> selections = marketDef.getSelectionIds().stream()
+                    List<Map<String, Object>> selections = marketDef.getSelections_ids().stream()
                             .map(selId -> {
                                 Map<String, Object> selection = new LinkedHashMap<>();
                                 selection.put("selection_type_id", selId);
