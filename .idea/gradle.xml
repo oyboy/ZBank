@@ -10,7 +10,19 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/api-tests" />
+            <option value="$PROJECT_DIR$/spring-tests" />
             <option value="$PROJECT_DIR$/ui-tests" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/demo" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/spring-tests" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/spring-tests" />
           </set>
         </option>
       </GradleProjectSettings>
